@@ -19,11 +19,11 @@ class Paths
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 
 	#if MODS_ALLOWED
-		#if (haxe >= "4.0.0")
-		public static var customImagesLoaded:Map<String, BitmapData> = new Map();
-		#else
-		public static var customImagesLoaded:Map<String, BitmapData> = new Map<String, openfl.display.BitmapData>();
-		#end
+	#if (haxe >= "4.0.0")
+	public static var customImagesLoaded:Map<String, BitmapData> = new Map();
+	#else
+	public static var customImagesLoaded:Map<String, BitmapData> = new Map<String, openfl.display.BitmapData>();
+	#end
 	#end
 	static var currentLevel:String;
 
@@ -123,8 +123,10 @@ class Paths
 	inline static public function image(key:String, ?library:String):Dynamic
 	{
 		#if MODS_ALLOWED
-		if(FileSystem.exists(modsImages(key))) {
-			if(!customImagesLoaded.exists(key)) {
+		if (FileSystem.exists(modsImages(key)))
+		{
+			if (!customImagesLoaded.exists(key))
+			{
 				customImagesLoaded.set(key, BitmapData.fromFile(modsImages(key)));
 			}
 			return customImagesLoaded.get(key);
@@ -132,7 +134,7 @@ class Paths
 		#end
 		return getPath('images/$key.png', IMAGE, library);
 	}
-	
+
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
 		#if sys
@@ -167,12 +169,14 @@ class Paths
 
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
-		if(OpenFlAssets.exists(Paths.getPath(key, type))) {
+		if (OpenFlAssets.exists(Paths.getPath(key, type)))
+		{
 			return true;
 		}
 
 		#if MODS_ALLOWED
-		if(FileSystem.exists(mods(key))) {
+		if (FileSystem.exists(mods(key)))
+		{
 			return true;
 		}
 		#end
@@ -183,19 +187,23 @@ class Paths
 	{
 		#if MODS_ALLOWED
 		var imageLoaded:BitmapData = null;
-		if(FileSystem.exists(modsImages(key))) {
-			if(!customImagesLoaded.exists(key)) {
+		if (FileSystem.exists(modsImages(key)))
+		{
+			if (!customImagesLoaded.exists(key))
+			{
 				customImagesLoaded.set(key, BitmapData.fromFile(modsImages(key)));
 			}
 			imageLoaded = customImagesLoaded.get(key);
 		}
-		
+
 		var xmlExists:Bool = false;
-		if(FileSystem.exists(modsXml(key))) {
+		if (FileSystem.exists(modsXml(key)))
+		{
 			xmlExists = true;
 		}
 
-		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)), (xmlExists ? File.getContent(modsXml(key)) : file('images/$key.xml', library)));
+		return FlxAtlasFrames.fromSparrow((imageLoaded != null ? imageLoaded : image(key, library)),
+			(xmlExists ? File.getContent(modsXml(key)) : file('images/$key.xml', library)));
 		#else
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
 		#end
@@ -205,36 +213,52 @@ class Paths
 	{
 		#if MODS_ALLOWED
 		var imageLoaded:BitmapData = null;
-		if(FileSystem.exists(modsImages(key))) {
-			if(!customImagesLoaded.exists(key)) {
+		if (FileSystem.exists(modsImages(key)))
+		{
+			if (!customImagesLoaded.exists(key))
+			{
 				customImagesLoaded.set(key, BitmapData.fromFile(modsImages(key)));
 			}
 			imageLoaded = customImagesLoaded.get(key);
 		}
-		
+
 		var txtExists:Bool = false;
-		if(FileSystem.exists(modsTxt(key))) {
+		if (FileSystem.exists(modsTxt(key)))
+		{
 			txtExists = true;
 		}
 
-		return FlxAtlasFrames.fromSpriteSheetPacker((imageLoaded != null ? imageLoaded : image(key, library)), (txtExists ? File.getContent(modsTxt(key)) : file('images/$key.txt', library)));
+		return FlxAtlasFrames.fromSpriteSheetPacker((imageLoaded != null ? imageLoaded : image(key, library)),
+			(txtExists ? File.getContent(modsTxt(key)) : file('images/$key.txt', library)));
 		#else
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 		#end
 	}
-	
+
+	inline static public function video(key:String, ?library:String)
+	{
+		trace('assets/videos/$key.mp4');
+		return getPath('videos/$key.mp4', BINARY, library);
+	}
+
 	#if MODS_ALLOWED
-	inline static public function mods(key:String) {
+	inline static public function mods(key:String)
+	{
 		return 'mods/' + key;
 	}
-	inline static public function modsImages(key:String) {
+
+	inline static public function modsImages(key:String)
+	{
 		return mods('images/' + key + '.png');
 	}
-	
-	inline static public function modsXml(key:String) {
+
+	inline static public function modsXml(key:String)
+	{
 		return mods('images/' + key + '.xml');
 	}
-	inline static public function modsTxt(key:String) {
+
+	inline static public function modsTxt(key:String)
+	{
 		return mods('images/' + key + '.xml');
 	}
 	#end
