@@ -110,6 +110,8 @@ class PlayState extends MusicBeatState
 	public var unspawnNotes:Array<Note> = [];
 	public var eventNotes:Array<Dynamic> = [];
 
+	private var arrowPositions:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0]; // Fixes lag fucking up Swap Notes/Flip Notes
+
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
@@ -120,6 +122,7 @@ class PlayState extends MusicBeatState
 	private static var prevCamFollow:FlxPoint;
 	private static var prevCamFollowPos:FlxObject;
 
+	// private var strumLinePsychicNotes:FlxTypedGroup<AttachedSprite>;
 	public var strumLineNotes:FlxTypedGroup<StrumNote>;
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
 	public var playerStrums:FlxTypedGroup<StrumNote>;
@@ -769,6 +772,8 @@ class PlayState extends MusicBeatState
 		add(timeBar);
 		add(timeTxt);
 
+		// strumLinePsychicNotes = new FlxTypedGroup<AttachedSprite>();
+		// add(strumLinePsychicNotes);
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
 		add(grpNoteSplashes);
@@ -860,6 +865,7 @@ class PlayState extends MusicBeatState
 			botplayTxt.y = timeBarBG.y - 78;
 		}
 
+		// strumLinePsychicNotes.cameras = [camHUD];
 		strumLineNotes.cameras = [camHUD];
 		grpNoteSplashes.cameras = [camHUD];
 		notes.cameras = [camHUD];
@@ -1159,6 +1165,12 @@ class PlayState extends MusicBeatState
 		{
 			generateStaticArrows(0);
 			generateStaticArrows(1);
+
+			for (i in 0...arrowPositions.length)
+			{
+				arrowPositions[i] = strumLineNotes.members[i].x;
+			}
+
 			for (i in 0...playerStrums.length)
 			{
 				setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
@@ -2817,6 +2829,23 @@ class PlayState extends MusicBeatState
 							gf.visible = isGfVisible;
 						}
 				}
+
+			case 'Flip Notes':
+				swapNotesOnStrum(0, 3);
+				swapNotesOnStrum(1, 2);
+
+			case 'Invert Notes':
+				swapNotesOnStrum(0, 1);
+				swapNotesOnStrum(2, 3);
+
+			case 'Swap Notes':
+				var val1:Int = Std.parseInt(value1);
+				var val2:Int = Std.parseInt(value2);
+				if (Math.isNaN(val1))
+					val1 = 0;
+				if (Math.isNaN(val2))
+					val2 = 3;
+				swapNotesOnStrum(val1, val2);
 		}
 		if (!onLua)
 		{
@@ -2883,6 +2912,114 @@ class PlayState extends MusicBeatState
 	{
 		camFollow.set(x, y);
 		camFollowPos.setPosition(x, y);
+	}
+
+	function swapNotesOnStrum(note1:Int, note2:Int)
+	{ // Don't make questions.
+		if (note1 == note2)
+		{
+			return;
+		}
+		else if (note1 > note2)
+		{
+			var oldNote:Int = note2;
+			note2 = note1;
+			note1 = oldNote;
+		}
+
+		var swapped:Bool = false;
+		if (arrowPositions[note2] < arrowPositions[note1])
+		{
+			swapped = true;
+		}
+
+		if (playerStrums != null)
+		{
+			var lastArrowPositions = arrowPositions.copy();
+			for (i in 0...2)
+			{
+				var newPos:Int = note2;
+				var spr:StrumNote = playerStrums.members[note1];
+				if (i != 0)
+				{
+					newPos = note1;
+					spr = playerStrums.members[note2];
+				}
+
+				if (swapped)
+				{
+					if (newPos == note1)
+						newPos = note2;
+					else
+						newPos = note1;
+				}
+
+				var newX = lastArrowPositions[(i == 0 ? note2 : note1) + 4];
+				if (spr != null)
+				{
+					FlxTween.tween(spr, {x: newX}, 0.3, {
+						onComplete: function(twn:FlxTween)
+						{
+							trace('nothing');
+						},
+						ease: FlxEase.sineInOut
+					});
+
+					var rot:Float = 40;
+					if (spr.ID > 1)
+					{
+						rot = -40;
+					}
+					if (swapped)
+						rot = -rot;
+
+					FlxTween.tween(spr, {angle: rot}, 0.25, {ease: FlxEase.sineIn});
+					FlxTween.tween(spr, {angle: 0}, 0.125, {ease: FlxEase.linear, startDelay: 0.2});
+				}
+				arrowPositions[(i == 0 ? note1 : note2) + 4] = newX;
+			}
+		}
+
+		if (unspawnNotes.length > 0)
+		{ // Unspawned notes do a less expensive operation
+			for (i in 0...unspawnNotes.length)
+			{
+				var daNote = unspawnNotes[i];
+				var newPos:Int = note1;
+				if (daNote != null && daNote.mustPress && (daNote.noteData == (newPos = note1) || (daNote.noteData == (newPos = note2))))
+				{
+					var add:Float = 0;
+					if (daNote.prevNote != daNote)
+						add = (daNote.width / 2) - 5;
+
+					daNote.x = arrowPositions[newPos + 4] + 50 - add;
+				}
+			}
+		}
+
+		notes.forEach(function(daNote:Note)
+		{
+			var newPos:Int = note1;
+			if (daNote != null && daNote.mustPress && (daNote.noteData == (newPos = note1) || (daNote.noteData == (newPos = note2))))
+			{
+				var add:Float = 0;
+				if (daNote.prevNote != daNote)
+					add = (daNote.width / 2) - 5;
+
+				FlxTween.tween(daNote, {x: arrowPositions[newPos + 4] + 50 - add}, 0.3, {ease: FlxEase.sineIn});
+
+				var rot:Float = 40;
+				if (daNote.noteData > 1)
+				{
+					rot = -40;
+				}
+				if (swapped)
+					rot = -rot;
+
+				FlxTween.tween(daNote, {angle: rot}, 0.25, {ease: FlxEase.sineIn});
+				FlxTween.tween(daNote, {angle: 0}, 0.125, {ease: FlxEase.linear, startDelay: 0.2});
+			}
+		});
 	}
 
 	function finishSong():Void

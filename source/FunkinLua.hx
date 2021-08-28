@@ -1,3 +1,4 @@
+import openfl.geom.Matrix;
 #if LUA_ALLOWED
 import llua.Lua;
 import llua.LuaL;
@@ -901,6 +902,15 @@ class FunkinLua
 				}
 				lePlayState.dialogueIntro(shit, song);
 			}
+		});
+		Lua_helper.add_callback(lua, "modAdd", function(a:Float, b:Float, c:Float, d:Float, e:String)
+		{
+			modInsert(a, b, c, d, e);
+		});
+		Lua_helper.add_callback(lua, "skewHud", function(skewX:Float, skewY:Float)
+		{
+			var cam = lePlayState.camHUD.flashSprite;
+			cam.transform.matrix = new Matrix(cam.scaleX, skewY, skewX, cam.scaleY, 0, 0);
 		});
 		call('onCreate', []);
 		#end

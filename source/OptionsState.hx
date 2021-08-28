@@ -795,6 +795,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 	static var noCheckbox:Array<String> = ['Framerate', 'Note Delay'];
 	static var options:Array<String> = [
 		unselectableOptions[0],
+		'Fullscreen',
 		'Low Quality',
 		'Anti-Aliasing',
 		'Persistent Cached Data',
@@ -1010,6 +1011,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Persistent Cached Data':
 						ClientPrefs.imagesPersist = !ClientPrefs.imagesPersist;
 						FlxGraphic.defaultPersist = ClientPrefs.imagesPersist;
+
+					case 'Fullscreen':
+						ClientPrefs.fullScreen = !ClientPrefs.fullScreen;
+						CoolUtil.fullScreen(ClientPrefs.fullScreen);
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1119,6 +1124,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "If unchecked, the camera won't zoom in on a beat hit.";
 			case 'Hide HUD':
 				daText = "If checked, hides most HUD elements.";
+			case 'Fullscreen':
+				daText = "Self explanatory. (Borderless, easier to record to)";
 		}
 		descText.text = daText;
 

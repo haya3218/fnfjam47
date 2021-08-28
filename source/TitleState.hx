@@ -113,6 +113,9 @@ class TitleState extends MusicBeatState
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 		ClientPrefs.loadPrefs();
+		Application.current.window.x = Main.initalWindowX;
+		Application.current.window.y = Main.initalWindowY;
+		CoolUtil.fullScreen(ClientPrefs.fullScreen);
 
 		Highscore.load();
 
@@ -293,36 +296,12 @@ class TitleState extends MusicBeatState
 	}
 
 	var transitioning:Bool = false;
-	var piss:Bool = false;
 
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
-
-		if (FlxG.keys.justPressed.F)
-		{
-			// BORDERLESS FULLSCREEN COS NORMAL FULLSCREEN IS ASS
-			if (!piss)
-			{
-				// gets best screen res from monitor ig
-				Application.current.window.x = 0;
-				Application.current.window.y = 0;
-				Application.current.window.width = Std.int(Capabilities.screenResolutionX);
-				Application.current.window.height = Std.int(Capabilities.screenResolutionY);
-			}
-			else
-			{
-				Application.current.window.x = Main.initalWindowX;
-				Application.current.window.y = Main.initalWindowY;
-				Application.current.window.width = FlxG.initialWidth;
-				Application.current.window.height = FlxG.initialHeight;
-			}
-			// FlxG.fullscreen = !FlxG.fullscreen;
-			piss = !piss;
-			Application.current.window.borderless = piss;
-		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 
