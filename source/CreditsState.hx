@@ -54,7 +54,7 @@ class CreditsState extends MusicBeatState
 			'polybiusproxy',
 			'MP4 cutscene support (beeg thanks)',
 			'https://twitter.com/polybiusproxy',
-			0x006666
+			0xFF006666
 		],
 		[''],
 		["Funkin' Crew"],

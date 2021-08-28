@@ -192,7 +192,7 @@ class MainMenuState extends MusicBeatState
 					// hello everyone my name is markiplier and welcome to five nights at freddys an indie horror game that yall suggested
 					// in mass and i saw that yamimash played it and he said it was really really good
 					var helloEveryone:FlxSprite = new FlxSprite(FlxG.random.float(0, FlxG.width), FlxG.random.float(0, FlxG.height));
-
+					helloEveryone.scrollFactor.set();
 					var video:VideoHandler = new VideoHandler();
 					video.playMP4(Paths.video('fanf'), null, helloEveryone, true, false, false,
 						true); // make the transition null so it doesn't take you out of this state
