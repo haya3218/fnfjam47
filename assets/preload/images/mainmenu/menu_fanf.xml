@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="menu_fanf.png">
+	<!-- Created with Adobe Flash Professional version 13.0.0.759 -->
+	<!-- http://www.adobe.com/products/flash.html -->
+	<SubTexture name="fanf basic0000" x="0" y="0" width="300" height="119"/>
+	<SubTexture name="fanf basic0001" x="0" y="0" width="300" height="119"/>
+	<SubTexture name="fanf basic0002" x="0" y="0" width="300" height="119"/>
+	<SubTexture name="fanf basic0003" x="0" y="124" width="300" height="119"/>
+	<SubTexture name="fanf basic0004" x="0" y="124" width="300" height="119"/>
+	<SubTexture name="fanf basic0005" x="0" y="124" width="300" height="119"/>
+	<SubTexture name="fanf basic0006" x="0" y="248" width="300" height="119"/>
+	<SubTexture name="fanf basic0007" x="0" y="248" width="300" height="119"/>
+	<SubTexture name="fanf basic0008" x="0" y="248" width="300" height="119"/>
+	<SubTexture name="fanf white0000" x="0" y="372" width="377" height="161" frameX="0" frameY="0" frameWidth="377" frameHeight="166"/>
+	<SubTexture name="fanf white0001" x="0" y="538" width="372" height="163" frameX="-2" frameY="0" frameWidth="377" frameHeight="166"/>
+	<SubTexture name="fanf white0002" x="0" y="706" width="370" height="164" frameX="-3" frameY="-2" frameWidth="377" frameHeight="166"/>
+</TextureAtlas>

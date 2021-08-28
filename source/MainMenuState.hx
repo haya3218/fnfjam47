@@ -1,5 +1,6 @@
 package;
 
+import openfl.media.Sound;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -36,7 +37,7 @@ class MainMenuState extends MusicBeatState
 		#if ACHIEVEMENTS_ALLOWED 'awards',
 		#end
 		'credits',
-		#if !switch 'donate',
+		#if !switch 'fanf',
 		#end
 		'options'
 	];
@@ -187,7 +188,7 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.ACCEPT)
 			{
-				if (optionShit[curSelected] == 'donate')
+				if (optionShit[curSelected] == 'fanf')
 				{
 					// hello everyone my name is markiplier and welcome to five nights at freddys an indie horror game that yall suggested
 					// in mass and i saw that yamimash played it and he said it was really really good
@@ -198,6 +199,13 @@ class MainMenuState extends MusicBeatState
 						true); // make the transition null so it doesn't take you out of this state
 
 					add(helloEveryone);
+
+					// hello everyone my name is markiplier and welcome to five nights at freddys an indie horror game that yall suggested
+					// in mass and i saw that yamimash played it and he said it was really really good
+					Achievements.achievementsUnlocked[achievementID][16] = true;
+					add(new AchievementObject(16, camAchievement));
+					FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
+					ClientPrefs.saveSettings();
 				}
 				else
 				{
@@ -224,6 +232,9 @@ class MainMenuState extends MusicBeatState
 							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
 							{
 								var daChoice:String = optionShit[curSelected];
+								// removes markiplier
+								var silence = new Sound();
+								silence.play();
 
 								switch (daChoice)
 								{

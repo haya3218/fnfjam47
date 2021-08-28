@@ -25,6 +25,37 @@ class CreditsState extends MusicBeatState
 
 	private static var creditsStuff:Array<Dynamic> = [
 		// Name - Icon name - Description - Link - BG Color
+		['The poopshitters'],
+		[
+			'cattekween',
+			'cattekween',
+			'Main Director/Artist and Animator',
+			'https://twitter.com/cattekween',
+			0xFF6055A5
+		],
+		[
+			'saqzar',
+			'discord',
+			'Main Coder and Charter',
+			'https://www.twitch.tv/saqzar',
+			0xFF5165F6
+		],
+		[
+			'santups',
+			'santi',
+			'Secondary Coder',
+			'https://twitter.com/santups132',
+			0xFFFFFFFF
+		],
+		[
+			'haya3218',
+			'haya',
+			'Tertiary Coder/Secondary Animator',
+			'https://github.com/haya3218',
+			0xFFA6DAE7
+		],
+		['Stash Club', 'stash', 'Musician', 'https://twitter.com/stash', 0xFFCD6650],
+		[''],
 		['Psych Engine Team'],
 		[
 			'Shadow Mario',
@@ -55,6 +86,13 @@ class CreditsState extends MusicBeatState
 			'MP4 cutscene support (beeg thanks)',
 			'https://twitter.com/polybiusproxy',
 			0xFF006666
+		],
+		[
+			'FriedFrick',
+			'friedfrick',
+			'FriedFrick. Nothing else',
+			'https://twitter.com/FriedFricky',
+			0xFF660099
 		],
 		[''],
 		["Funkin' Crew"],
@@ -126,6 +164,13 @@ class CreditsState extends MusicBeatState
 				var icon:AttachedSprite = new AttachedSprite('credits/' + creditsStuff[i][1]);
 				icon.xAdd = optionText.width + 10;
 				icon.sprTracker = optionText;
+				// if the sprite is bigger than or is 300 pixels
+				if (icon.pixels.width >= 300 && icon.pixels.height >= 300)
+				{
+					FlxG.log.add('piss');
+					icon.scale.set(0.5, 0.5);
+					icon.updateHitbox();
+				}
 
 				// using a FlxGroup is too much fuss!
 				iconArray.push(icon);

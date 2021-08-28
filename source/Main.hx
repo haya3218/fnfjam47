@@ -1,5 +1,7 @@
 package;
 
+import lime.app.Application;
+import openfl.system.Capabilities;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -18,7 +20,10 @@ class Main extends Sprite
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
+
 	public static var fpsVar:FPS;
+	public static var initalWindowX:Int = 0;
+	public static var initalWindowY:Int = 0;
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -74,9 +79,13 @@ class Main extends Sprite
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
-		if(fpsVar != null) {
+		if (fpsVar != null)
+		{
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
+
+		initalWindowX = Application.current.window.x;
+		initalWindowY = Application.current.window.y;
 		#end
 
 		#if html5

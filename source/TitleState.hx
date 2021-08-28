@@ -1,5 +1,6 @@
 package;
 
+import openfl.system.Capabilities;
 #if desktop
 import Discord.DiscordClient;
 import sys.thread.Thread;
@@ -26,6 +27,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
+import openfl.display.Application as OpenFLApplication;
 import openfl.Assets;
 #if sys
 import polymod.Polymod.Framework;
@@ -91,6 +93,9 @@ class TitleState extends MusicBeatState
 				});
 			}
 		}
+
+		lime.app.Application.current.window.borderless = false;
+		FlxG.stage.color = 0x00000000;
 		#end
 		FlxG.game.focusLostFramerate = 60;
 		FlxG.sound.muteKeys = muteKeys;
@@ -288,6 +293,7 @@ class TitleState extends MusicBeatState
 	}
 
 	var transitioning:Bool = false;
+	var piss:Bool = false;
 
 	override function update(elapsed:Float)
 	{
@@ -297,7 +303,25 @@ class TitleState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.F)
 		{
-			FlxG.fullscreen = !FlxG.fullscreen;
+			// BORDERLESS FULLSCREEN COS NORMAL FULLSCREEN IS ASS
+			if (!piss)
+			{
+				// gets best screen res from monitor ig
+				Application.current.window.x = 0;
+				Application.current.window.y = 0;
+				Application.current.window.width = Std.int(Capabilities.screenResolutionX);
+				Application.current.window.height = Std.int(Capabilities.screenResolutionY);
+			}
+			else
+			{
+				Application.current.window.x = Main.initalWindowX;
+				Application.current.window.y = Main.initalWindowY;
+				Application.current.window.width = FlxG.initialWidth;
+				Application.current.window.height = FlxG.initialHeight;
+			}
+			// FlxG.fullscreen = !FlxG.fullscreen;
+			piss = !piss;
+			Application.current.window.borderless = piss;
 		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
