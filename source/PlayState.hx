@@ -111,6 +111,11 @@ class PlayState extends MusicBeatState
 	public var eventNotes:Array<Dynamic> = [];
 
 	private var arrowPositions:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0]; // Fixes lag fucking up Swap Notes/Flip Notes
+	private var enemyArrowPositions:Array<Float> = [0, 0, 0, 0, 0, 0, 0, 0]; // ditto.
+	private var arrowPos:Array<Float> = [0, 0, 0, 0];
+	private var arrowPos2:Array<Float> = [0, 0, 0, 0];
+	private var arrowPosY:Array<Float> = [0, 0, 0, 0];
+	private var arrowPosY2:Array<Float> = [0, 0, 0, 0];
 
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
@@ -1171,6 +1176,31 @@ class PlayState extends MusicBeatState
 				arrowPositions[i] = strumLineNotes.members[i].x;
 			}
 
+			for (i in 0...enemyArrowPositions.length)
+			{
+				enemyArrowPositions[i] = strumLineNotes.members[i].x;
+			}
+
+			for (i in 0...arrowPos.length)
+			{
+				arrowPos[i] = opponentStrums.members[i].x;
+			}
+
+			for (i in 0...arrowPos2.length)
+			{
+				arrowPos2[i] = playerStrums.members[i].x;
+			}
+
+			for (i in 0...arrowPos.length)
+			{
+				arrowPosY[i] = opponentStrums.members[i].y;
+			}
+
+			for (i in 0...arrowPos2.length)
+			{
+				arrowPosY2[i] = playerStrums.members[i].y;
+			}
+
 			for (i in 0...playerStrums.length)
 			{
 				setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
@@ -1794,6 +1824,10 @@ class PlayState extends MusicBeatState
 	var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
+	var drunkNoteVal:Float = 0;
+	var drunkNoteSpd:Float = 0.25;
+	var tipsyNoteVal:Float = 0;
+	var tipsyNoteSpd:Float = 0.25;
 
 	override public function update(elapsed:Float)
 	{
@@ -2186,6 +2220,8 @@ class PlayState extends MusicBeatState
 		{
 			var roundedSpeed:Float = FlxMath.roundDecimal(SONG.speed, 2);
 			var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
+			var fakeCrochet2:Float = (Conductor.songPosition / 1000) * (SONG.bpm / 60);
+
 			notes.forEachAlive(function(daNote:Note)
 			{
 				if (daNote.y > FlxG.height)
@@ -2209,7 +2245,39 @@ class PlayState extends MusicBeatState
 				{
 					strumY = opponentStrums.members[daNote.noteData].y;
 				}
+				var strumX:Float = 0;
+				if (daNote.mustPress)
+				{
+					strumX = playerStrums.members[daNote.noteData].x;
+				}
+				else
+				{
+					strumX = opponentStrums.members[daNote.noteData].x;
+				}
 				var center:Float = strumY + Note.swagWidth / 2;
+
+				if (drunkNoteVal != 0)
+				{
+					// notitg style drunk notes based on kade (fuck off kade >:(((()
+					var piss = Math.floor(arrowPos[daNote.noteData]) + drunkNoteVal * Math.sin((fakeCrochet2 + daNote.noteData * drunkNoteSpd) * Math.PI);
+					var piss2 = Math.floor(arrowPos2[daNote.noteData]) + drunkNoteVal * Math.sin((fakeCrochet2 + daNote.noteData * drunkNoteSpd) * Math.PI);
+					opponentStrums.members[daNote.noteData].x = piss;
+					playerStrums.members[daNote.noteData].x = piss2;
+				}
+
+				if (!daNote.isSustainNote)
+					daNote.x = strumX;
+				else
+					daNote.x = strumX + 20;
+
+				if (tipsyNoteVal != 0)
+				{
+					// notitg style tipsy notes based on kade (fuck off kade >:(((()
+					var piss = Math.floor(arrowPosY[daNote.noteData]) + tipsyNoteVal * Math.cos((fakeCrochet2 + daNote.noteData * tipsyNoteSpd) * Math.PI);
+					var piss2 = Math.floor(arrowPosY2[daNote.noteData]) + tipsyNoteVal * Math.cos((fakeCrochet2 + daNote.noteData * tipsyNoteSpd) * Math.PI);
+					opponentStrums.members[daNote.noteData].y = piss;
+					playerStrums.members[daNote.noteData].y = piss2;
+				}
 
 				if (ClientPrefs.downScroll)
 				{
@@ -2831,12 +2899,16 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Flip Notes':
-				swapNotesOnStrum(0, 3);
-				swapNotesOnStrum(1, 2);
+				swapNotesOnStrum(0, 3, playerStrums, arrowPositions);
+				swapNotesOnStrum(1, 2, playerStrums, arrowPositions);
+				swapNotesOnStrum(0, 3, opponentStrums, enemyArrowPositions);
+				swapNotesOnStrum(1, 2, opponentStrums, enemyArrowPositions);
 
 			case 'Invert Notes':
-				swapNotesOnStrum(0, 1);
-				swapNotesOnStrum(2, 3);
+				swapNotesOnStrum(0, 1, playerStrums, arrowPositions);
+				swapNotesOnStrum(2, 3, playerStrums, arrowPositions);
+				swapNotesOnStrum(0, 1, opponentStrums, enemyArrowPositions);
+				swapNotesOnStrum(2, 3, opponentStrums, enemyArrowPositions);
 
 			case 'Swap Notes':
 				var val1:Int = Std.parseInt(value1);
@@ -2845,7 +2917,43 @@ class PlayState extends MusicBeatState
 					val1 = 0;
 				if (Math.isNaN(val2))
 					val2 = 3;
-				swapNotesOnStrum(val1, val2);
+				swapNotesOnStrum(val1, val2, playerStrums, arrowPositions);
+
+			case 'Swap Notes (Enemy)':
+				var val1:Int = Std.parseInt(value1);
+				var val2:Int = Std.parseInt(value2);
+				if (Math.isNaN(val1))
+					val1 = 0;
+				if (Math.isNaN(val2))
+					val2 = 3;
+				swapNotesOnStrum(val1, val2, opponentStrums, enemyArrowPositions);
+
+			case 'Drunk Notes':
+				var val1:Float = Std.parseFloat(value1);
+				var val2:Int = Std.parseInt(value2);
+				if (Math.isNaN(val1))
+					val1 = 0.25;
+				if (Math.isNaN(val2))
+					val2 = 32;
+				drunkNoteVal = val2;
+				drunkNoteSpd = val1;
+				FlxG.log.add('piss');
+				FlxG.log.add(val1);
+				FlxG.log.add(val2);
+			// FlxG.log.add(drunkNoteVal);
+
+			case 'Tipsy Notes':
+				var val1:Float = Std.parseFloat(value1);
+				var val2:Int = Std.parseInt(value2);
+				if (Math.isNaN(val1))
+					val1 = 0.25;
+				if (Math.isNaN(val2))
+					val2 = 32;
+				tipsyNoteVal = val2;
+				tipsyNoteSpd = val1;
+				FlxG.log.add('piss');
+				FlxG.log.add(val1);
+				FlxG.log.add(val2);
 		}
 		if (!onLua)
 		{
@@ -2914,7 +3022,7 @@ class PlayState extends MusicBeatState
 		camFollowPos.setPosition(x, y);
 	}
 
-	function swapNotesOnStrum(note1:Int, note2:Int)
+	public function swapNotesOnStrum(note1:Int, note2:Int, strums:FlxTypedGroup<StrumNote>, arrowPos:Array<Float>)
 	{ // Don't make questions.
 		if (note1 == note2)
 		{
@@ -2928,22 +3036,22 @@ class PlayState extends MusicBeatState
 		}
 
 		var swapped:Bool = false;
-		if (arrowPositions[note2] < arrowPositions[note1])
+		if (arrowPos[note2] < arrowPos[note1])
 		{
 			swapped = true;
 		}
 
-		if (playerStrums != null)
+		if (strums != null)
 		{
-			var lastArrowPositions = arrowPositions.copy();
+			var lastArrowPositions = arrowPos.copy();
 			for (i in 0...2)
 			{
 				var newPos:Int = note2;
-				var spr:StrumNote = playerStrums.members[note1];
+				var spr:StrumNote = strums.members[note1];
 				if (i != 0)
 				{
 					newPos = note1;
-					spr = playerStrums.members[note2];
+					spr = strums.members[note2];
 				}
 
 				if (swapped)
@@ -2955,6 +3063,8 @@ class PlayState extends MusicBeatState
 				}
 
 				var newX = lastArrowPositions[(i == 0 ? note2 : note1) + 4];
+				if (strums == opponentStrums)
+					newX = lastArrowPositions[(i == 0 ? note2 : note1)];
 				if (spr != null)
 				{
 					FlxTween.tween(spr, {x: newX}, 0.3, {
@@ -2976,10 +3086,23 @@ class PlayState extends MusicBeatState
 					FlxTween.tween(spr, {angle: rot}, 0.25, {ease: FlxEase.sineIn});
 					FlxTween.tween(spr, {angle: 0}, 0.125, {ease: FlxEase.linear, startDelay: 0.2});
 				}
-				arrowPositions[(i == 0 ? note1 : note2) + 4] = newX;
+				if (strums == opponentStrums)
+				{
+					arrowPos[(i == 0 ? note1 : note2)] = newX;
+					this.arrowPos[(i == 0 ? note1 : note2)] = newX;
+				}
+				else
+				{
+					arrowPos[(i == 0 ? note1 : note2) + 4] = newX;
+					arrowPos2[0] = arrowPos[4];
+					arrowPos2[1] = arrowPos[5];
+					arrowPos2[2] = arrowPos[6];
+					arrowPos2[3] = arrowPos[7];
+				}
 			}
 		}
 
+		/*
 		if (unspawnNotes.length > 0)
 		{ // Unspawned notes do a less expensive operation
 			for (i in 0...unspawnNotes.length)
@@ -2992,7 +3115,10 @@ class PlayState extends MusicBeatState
 					if (daNote.prevNote != daNote)
 						add = (daNote.width / 2) - 5;
 
-					daNote.x = arrowPositions[newPos + 4] + 50 - add;
+					if (strums == opponentStrums && !daNote.canBeHit)
+						daNote.x = arrowPos[newPos] + 50 - add;
+					else
+						daNote.x = arrowPos[newPos + 4] + 50 - add;
 				}
 			}
 		}
@@ -3006,7 +3132,10 @@ class PlayState extends MusicBeatState
 				if (daNote.prevNote != daNote)
 					add = (daNote.width / 2) - 5;
 
-				FlxTween.tween(daNote, {x: arrowPositions[newPos + 4] + 50 - add}, 0.3, {ease: FlxEase.sineIn});
+				if (strums == opponentStrums && !daNote.canBeHit)
+					FlxTween.tween(daNote, {x: arrowPos[newPos] + 50 - add}, 0.3, {ease: FlxEase.sineIn});
+				else
+					FlxTween.tween(daNote, {x: arrowPos[newPos + 4] + 50 - add}, 0.3, {ease: FlxEase.sineIn});
 
 				var rot:Float = 40;
 				if (daNote.noteData > 1)
@@ -3020,6 +3149,7 @@ class PlayState extends MusicBeatState
 				FlxTween.tween(daNote, {angle: 0}, 0.125, {ease: FlxEase.linear, startDelay: 0.2});
 			}
 		});
+	 */
 	}
 
 	function finishSong():Void

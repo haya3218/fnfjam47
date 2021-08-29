@@ -93,6 +93,18 @@ class ChartingState extends MusicBeatState
 		[
 			'Swap Notes',
 			"Value 1: Arrow to swap\nValue 2: New arrow position of the arrow to be swapped\n(and vice versa)"
+		],
+		[
+			'Swap Notes (Enemy)',
+			"Value 1: Arrow to swap\nValue 2: New arrow position of the arrow to be swapped\n(and vice versa)\n(For opponents only)"
+		],
+		[
+			'Drunk Notes',
+			"Value 1: How much spacing between the arrows\n(0.01 and below makes it stand still)\nValue 2: How much drunkness"
+		],
+		[
+			'Tipsy Notes',
+			"Value 1: How much spacing between the arrows on the y axis\n(0.01 and below makes it stand still)\nValue 2: How much tipsyness"
 		]
 	];
 

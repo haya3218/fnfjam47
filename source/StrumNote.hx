@@ -6,7 +6,7 @@ import flixel.graphics.frames.FlxAtlasFrames;
 
 using StringTools;
 
-class StrumNote extends FlxSkewedSprite
+class StrumNote extends FlxSprite
 {
 	private var colorSwap:ColorSwap;
 

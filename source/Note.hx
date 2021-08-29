@@ -10,7 +10,7 @@ import flash.display.BitmapData;
 
 using StringTools;
 
-class Note extends FlxSkewedSprite // skewign :)
+class Note extends FlxSprite
 {
 	public var strumTime:Float = 0;
 
