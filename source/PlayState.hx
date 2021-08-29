@@ -2222,6 +2222,27 @@ class PlayState extends MusicBeatState
 			var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
 			var fakeCrochet2:Float = (Conductor.songPosition / 1000) * (SONG.bpm / 60);
 
+			for (i in 0...4)
+			{
+				if (drunkNoteVal != 0)
+				{
+					// notitg style drunk notes based on kade (fuck off kade >:(((()
+					var piss = Math.floor(arrowPos[i]) + drunkNoteVal * Math.sin((fakeCrochet2 + i * drunkNoteSpd) * Math.PI);
+					var piss2 = Math.floor(arrowPos2[i]) + drunkNoteVal * Math.sin((fakeCrochet2 + i * drunkNoteSpd) * Math.PI);
+					opponentStrums.members[i].x = piss;
+					playerStrums.members[i].x = piss2;
+				}
+
+				if (tipsyNoteVal != 0)
+				{
+					// notitg style tipsy notes based on kade (fuck off kade >:(((()
+					var piss = Math.floor(arrowPosY[i]) + tipsyNoteVal * Math.cos((fakeCrochet2 + i * tipsyNoteSpd) * Math.PI);
+					var piss2 = Math.floor(arrowPosY2[i]) + tipsyNoteVal * Math.cos((fakeCrochet2 + i * tipsyNoteSpd) * Math.PI);
+					opponentStrums.members[i].y = piss;
+					playerStrums.members[i].y = piss2;
+				}
+			}
+
 			notes.forEachAlive(function(daNote:Note)
 			{
 				if (daNote.y > FlxG.height)
@@ -2256,28 +2277,10 @@ class PlayState extends MusicBeatState
 				}
 				var center:Float = strumY + Note.swagWidth / 2;
 
-				if (drunkNoteVal != 0)
-				{
-					// notitg style drunk notes based on kade (fuck off kade >:(((()
-					var piss = Math.floor(arrowPos[daNote.noteData]) + drunkNoteVal * Math.sin((fakeCrochet2 + daNote.noteData * drunkNoteSpd) * Math.PI);
-					var piss2 = Math.floor(arrowPos2[daNote.noteData]) + drunkNoteVal * Math.sin((fakeCrochet2 + daNote.noteData * drunkNoteSpd) * Math.PI);
-					opponentStrums.members[daNote.noteData].x = piss;
-					playerStrums.members[daNote.noteData].x = piss2;
-				}
-
 				if (!daNote.isSustainNote)
 					daNote.x = strumX;
 				else
 					daNote.x = strumX + 20;
-
-				if (tipsyNoteVal != 0)
-				{
-					// notitg style tipsy notes based on kade (fuck off kade >:(((()
-					var piss = Math.floor(arrowPosY[daNote.noteData]) + tipsyNoteVal * Math.cos((fakeCrochet2 + daNote.noteData * tipsyNoteSpd) * Math.PI);
-					var piss2 = Math.floor(arrowPosY2[daNote.noteData]) + tipsyNoteVal * Math.cos((fakeCrochet2 + daNote.noteData * tipsyNoteSpd) * Math.PI);
-					opponentStrums.members[daNote.noteData].y = piss;
-					playerStrums.members[daNote.noteData].y = piss2;
-				}
 
 				if (ClientPrefs.downScroll)
 				{
