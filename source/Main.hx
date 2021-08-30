@@ -1,5 +1,7 @@
 package;
 
+import crashdumper.SessionData;
+import crashdumper.CrashDumper;
 import lime.app.Application;
 import openfl.system.Capabilities;
 import flixel.FlxG;
@@ -10,6 +12,13 @@ import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import haxe.CallStack;
+import haxe.io.Path;
+import openfl.events.UncaughtErrorEvent;
+import sys.io.File;
+import sys.FileSystem;
+import sys.io.Process;
+import Discord.DiscordClient;
 
 class Main extends Sprite
 {
@@ -24,6 +33,8 @@ class Main extends Sprite
 	public static var fpsVar:FPS;
 	public static var initalWindowX:Int = 0;
 	public static var initalWindowY:Int = 0;
+
+	var game:FlxGame;
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -58,6 +69,7 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -77,7 +89,8 @@ class Main extends Sprite
 		initalWindowX = Application.current.window.x;
 		initalWindowY = Application.current.window.y;
 
-		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
+		game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
+		addChild(game);
 
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
@@ -92,5 +105,65 @@ class Main extends Sprite
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
 		#end
+	}
+
+	public static function onCrash(e:UncaughtErrorEvent):Void
+	{
+		// thanks gedehari
+		var errMsg:String = "";
+		var path:String;
+		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
+		var dateNow:String = Date.now().toString();
+
+		dateNow = StringTools.replace(dateNow, " ", "_");
+		dateNow = StringTools.replace(dateNow, ":", "'");
+
+		path = "./log/" + "NotFNF_" + dateNow + ".txt";
+
+		for (stackItem in callStack)
+		{
+			switch (stackItem)
+			{
+				case FilePos(s, file, line, column):
+					errMsg += file + " (line " + line + ")\n";
+				default:
+					Sys.println(stackItem);
+			}
+		}
+
+		errMsg += "\nUncaught Error: " + e.error + "\nPlease report this error to the GitHub page: https://github.com/haya3218/fnfjam47";
+
+		if (!FileSystem.exists("./log/"))
+			FileSystem.createDirectory("./log/");
+
+		File.saveContent(path, errMsg + "\n");
+
+		Sys.println(errMsg);
+		Sys.println("Crash dump saved in " + Path.normalize(path));
+
+		var crashDialoguePath:String = "pissEater";
+
+		#if windows
+		crashDialoguePath += ".exe";
+		#end
+
+		if (FileSystem.exists("./" + crashDialoguePath))
+		{
+			Sys.println("Found crash dialog: " + crashDialoguePath);
+
+			#if linux
+			crashDialoguePath = "./" + crashDialoguePath;
+			#end
+			new Process(crashDialoguePath, [path]);
+		}
+		else
+		{
+			// I had to do this or the stupid CI won't build :distress:
+			Sys.println("No crash dialog found! Making a simple alert instead...");
+			Application.current.window.alert(errMsg, "Error!");
+		}
+
+		DiscordClient.shutdownRichPresence();
+		Sys.exit(1);
 	}
 }

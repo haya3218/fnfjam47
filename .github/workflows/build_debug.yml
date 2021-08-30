@@ -42,12 +42,13 @@ jobs:
           haxelib install hxcpp-debug-server
           haxelib install actuate
           haxelib git linc_luajit https://github.com/AndreiRudenko/linc_luajit
+          haxelib git crashdumper https://github.com/loudoweb/crashdumper
           haxelib list
         shell: cmd
       - name: Compile
-        run: haxelib run lime build windows -debug
+        run: haxelib run lime build windows -FLX_DEBUG
       - name: Archive
-        run: tar -czf bin.tar.gz export/debug/windows/bin
+        run: tar -czf bin.tar.gz export/release/windows/bin
       - name: Clean up stuff + set tags for release
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"

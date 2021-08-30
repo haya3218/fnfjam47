@@ -84,4 +84,10 @@ class DiscordClient
 
 		// trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
+
+	public static function shutdownRichPresence()
+	{
+		trace("Shutting down Rich Presence...");
+		DiscordRpc.shutdown();
+	}
 }

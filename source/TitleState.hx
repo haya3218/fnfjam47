@@ -1,5 +1,16 @@
 package;
 
+import crashdumper.SessionData;
+import crashdumper.CrashDumper;
+import haxe.io.Path;
+import haxe.CallStack;
+import haxe.CallStack.StackItem;
+import openfl.events.UncaughtErrorEvent;
+import sys.io.Process;
+import sys.io.File;
+import sys.FileSystem;
+import openfl.Lib;
+import openfl.display.BitmapData;
 import openfl.system.Capabilities;
 #if desktop
 import Discord.DiscordClient;
@@ -158,6 +169,8 @@ class TitleState extends MusicBeatState
 			{
 				startIntro();
 			});
+
+			// Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash, true, 99);
 		}
 		#end
 	}
@@ -326,6 +339,14 @@ class TitleState extends MusicBeatState
 			if (gamepad.justPressed.B)
 				pressedEnter = true;
 			#end
+		}
+
+		if (FlxG.keys.justPressed.C)
+		{
+			// test crash dialog
+			trace('Goodbye world!');
+			var nullB:BitmapData = null;
+			nullB.clone();
 		}
 
 		if (pressedEnter && !transitioning && skippedIntro)
