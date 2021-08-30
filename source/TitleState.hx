@@ -1,5 +1,6 @@
 package;
 
+import haxe.Exception;
 import crashdumper.SessionData;
 import crashdumper.CrashDumper;
 import haxe.io.Path;
@@ -343,10 +344,7 @@ class TitleState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.C)
 		{
-			// test crash dialog
-			trace('Goodbye world!');
-			var nullB:BitmapData = null;
-			nullB.clone();
+			intCrash();
 		}
 
 		if (pressedEnter && !transitioning && skippedIntro)
