@@ -1,7 +1,5 @@
 package;
 
-import crashdumper.SessionData;
-import crashdumper.CrashDumper;
 import lime.app.Application;
 import openfl.system.Capabilities;
 import flixel.FlxG;
