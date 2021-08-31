@@ -1,8 +1,6 @@
 package;
 
 import haxe.Exception;
-import crashdumper.SessionData;
-import crashdumper.CrashDumper;
 import haxe.io.Path;
 import haxe.CallStack;
 import haxe.CallStack.StackItem;
