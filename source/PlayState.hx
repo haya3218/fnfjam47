@@ -2280,7 +2280,7 @@ class PlayState extends MusicBeatState
 				if (!daNote.isSustainNote)
 					daNote.x = strumX;
 				else
-					daNote.x = strumX + 20;
+					daNote.x = strumX + 40;
 
 				if (ClientPrefs.downScroll)
 				{

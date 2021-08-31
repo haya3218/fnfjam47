@@ -186,6 +186,11 @@ class MainMenuState extends MusicBeatState
 				MusicBeatState.switchState(new TitleState());
 			}
 
+			if (FlxG.keys.pressed.S && FlxG.keys.pressed.O && FlxG.keys.pressed.N && FlxG.keys.pressed.I && FlxG.keys.pressed.C)
+			{
+				MusicBeatState.switchState(new TrolledState());
+			}
+
 			if (controls.ACCEPT)
 			{
 				if (optionShit[curSelected] == 'fanf')
