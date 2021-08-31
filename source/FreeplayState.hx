@@ -97,6 +97,7 @@ class FreeplayState extends MusicBeatState
 		 */
 
 		addSong('Hill', 0, 'bf', 0xFF8B0000);
+		addSong('Crushed', 0, 'bf', 0xFF8B0000);
 
 		// LOAD MUSIC
 
