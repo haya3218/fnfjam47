@@ -13,9 +13,11 @@ import openfl.events.Event;
 import haxe.CallStack;
 import haxe.io.Path;
 import openfl.events.UncaughtErrorEvent;
+#if sys
 import sys.io.File;
 import sys.FileSystem;
 import sys.io.Process;
+#end
 import Discord.DiscordClient;
 
 class Main extends Sprite
@@ -67,7 +69,9 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
+		#if sys
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		#end
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -105,6 +109,7 @@ class Main extends Sprite
 		#end
 	}
 
+	#if sys
 	public static function onCrash(e:UncaughtErrorEvent):Void
 	{
 		// thanks gedehari
@@ -164,4 +169,5 @@ class Main extends Sprite
 		DiscordClient.shutdownRichPresence();
 		Sys.exit(1);
 	}
+	#end
 }
