@@ -5,9 +5,11 @@ import haxe.io.Path;
 import haxe.CallStack;
 import haxe.CallStack.StackItem;
 import openfl.events.UncaughtErrorEvent;
+#if sys
 import sys.io.Process;
 import sys.io.File;
 import sys.FileSystem;
+#end
 import openfl.Lib;
 import openfl.display.BitmapData;
 import openfl.system.Capabilities;
