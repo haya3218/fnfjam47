@@ -35,15 +35,15 @@ class CreditsState extends MusicBeatState
 		],
 		[
 			'saqzar',
-			'discord',
-			'Main Coder and Charter',
-			'https://www.twitch.tv/saqzar',
+			'saqzar',
+			'Main Coder',
+			'https://github.com/saqmod',
 			0xFF5165F6
 		],
 		[
 			'santups',
 			'santi',
-			'Secondary Coder',
+			'Secondary Coder and Charter',
 			'https://twitter.com/santups132',
 			0xFFFFFFFF
 		],
