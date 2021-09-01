@@ -36,7 +36,7 @@ class FreeplayState extends MusicBeatState
 	var selector:FlxText;
 
 	private static var curSelected:Int = 0;
-	private static var curDifficulty:Int = 1;
+	private static var curDifficulty:Int = 0;
 
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
@@ -283,7 +283,7 @@ class FreeplayState extends MusicBeatState
 			if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
 			{
 				poop = songLowercase;
-				curDifficulty = 1;
+				curDifficulty = 0;
 				trace('Couldnt find file');
 			}
 			trace(poop);
@@ -327,8 +327,8 @@ class FreeplayState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficultyStuff.length - 1;
-		if (curDifficulty >= CoolUtil.difficultyStuff.length)
+			curDifficulty = 0;
+		if (curDifficulty >= 0)
 			curDifficulty = 0;
 
 		#if !switch
