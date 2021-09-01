@@ -592,6 +592,13 @@ class PlayState extends MusicBeatState
 					add(bg);
 				}
 
+			case 'crushed':
+				defaultCamZoom = 0.9;
+				curStage = 'breakdance';
+				var bg:BGSprite = new BGSprite('backbackground', -500, -300, 0.9, 0.9, null, false, 'weekA');
+				bg.setGraphicSize(Std.int(bg.width * 0.9));
+				bg.updateHitbox();
+				add(bg);
 			default:
 				defaultCamZoom = 0.9;
 				curStage = 'stage';
@@ -719,6 +726,14 @@ class PlayState extends MusicBeatState
 		// Shitty layering but whatev it works LOL
 		if (curStage == 'limo')
 			add(limo);
+
+		if (curStage == 'breakdance')
+		{
+			var bg2:BGSprite = new BGSprite('background', -500, -300, 0.9, 0.9, null, false, 'weekA');
+			bg2.setGraphicSize(Std.int(bg2.width * 0.9));
+			bg2.updateHitbox();
+			add(bg2);
+		}
 
 		add(dadGroup);
 		add(boyfriendGroup);
