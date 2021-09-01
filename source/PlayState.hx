@@ -1824,10 +1824,17 @@ class PlayState extends MusicBeatState
 	var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
+
+	// drunk and tipsy shit
 	var drunkNoteVal:Float = 0;
 	var drunkNoteSpd:Float = 0.25;
 	var tipsyNoteVal:Float = 0;
 	var tipsyNoteSpd:Float = 0.25;
+	var dLerpNoteVal:Float = 0;
+	var dLerpNoteSpd:Float = 0;
+	var tLerpNoteVal:Float = 0;
+	var tLerpNoteSpd:Float = 0;
+	var notePos:Float = 0;
 
 	override public function update(elapsed:Float)
 	{
@@ -2227,8 +2234,10 @@ class PlayState extends MusicBeatState
 				if (drunkNoteVal != 0)
 				{
 					// notitg style drunk notes based on kade (fuck off kade >:(((()
-					var piss = Math.floor(arrowPos[i]) + drunkNoteVal * Math.sin((fakeCrochet2 + i * drunkNoteSpd) * Math.PI);
-					var piss2 = Math.floor(arrowPos2[i]) + drunkNoteVal * Math.sin((fakeCrochet2 + i * drunkNoteSpd) * Math.PI);
+					dLerpNoteVal = FlxMath.lerp(dLerpNoteVal, drunkNoteVal, 0.07 * (FlxG.drawFramerate / 60));
+					dLerpNoteSpd = FlxMath.lerp(dLerpNoteSpd, drunkNoteSpd, 0.07 * (FlxG.drawFramerate / 60));
+					var piss = Math.floor(arrowPos[i]) + dLerpNoteVal * Math.sin((fakeCrochet2 + i * dLerpNoteSpd) * Math.PI);
+					var piss2 = Math.floor(arrowPos2[i]) + dLerpNoteVal * Math.sin((fakeCrochet2 + i * dLerpNoteSpd) * Math.PI);
 					opponentStrums.members[i].x = piss;
 					playerStrums.members[i].x = piss2;
 				}
@@ -2236,8 +2245,10 @@ class PlayState extends MusicBeatState
 				if (tipsyNoteVal != 0)
 				{
 					// notitg style tipsy notes based on kade (fuck off kade >:(((()
-					var piss = Math.floor(arrowPosY[i]) + tipsyNoteVal * Math.cos((fakeCrochet2 + i * tipsyNoteSpd) * Math.PI);
-					var piss2 = Math.floor(arrowPosY2[i]) + tipsyNoteVal * Math.cos((fakeCrochet2 + i * tipsyNoteSpd) * Math.PI);
+					tLerpNoteVal = FlxMath.lerp(tLerpNoteVal, tipsyNoteVal, 0.07 * (FlxG.drawFramerate / 60));
+					tLerpNoteSpd = FlxMath.lerp(tLerpNoteSpd, tipsyNoteSpd, 0.07 * (FlxG.drawFramerate / 60));
+					var piss = Math.floor(arrowPosY[i]) + tLerpNoteVal * Math.cos((fakeCrochet2 + i * tLerpNoteSpd) * Math.PI);
+					var piss2 = Math.floor(arrowPosY2[i]) + tLerpNoteVal * Math.cos((fakeCrochet2 + i * tLerpNoteSpd) * Math.PI);
 					opponentStrums.members[i].y = piss;
 					playerStrums.members[i].y = piss2;
 				}
@@ -2280,7 +2291,9 @@ class PlayState extends MusicBeatState
 				if (!daNote.isSustainNote)
 					daNote.x = strumX;
 				else
-					daNote.x = strumX + 40;
+					daNote.x = strumX + 38;
+
+				// daNote.x = FlxMath.lerp(daNote.x, notePos, 0.07 * (FlxG.drawFramerate / 60));
 
 				if (ClientPrefs.downScroll)
 				{
@@ -3097,10 +3110,7 @@ class PlayState extends MusicBeatState
 				else
 				{
 					arrowPos[(i == 0 ? note1 : note2) + 4] = newX;
-					arrowPos2[0] = arrowPos[4];
-					arrowPos2[1] = arrowPos[5];
-					arrowPos2[2] = arrowPos[6];
-					arrowPos2[3] = arrowPos[7];
+					arrowPos2[(i == 0 ? note1 : note2) + 4] = newX;
 				}
 			}
 		}
