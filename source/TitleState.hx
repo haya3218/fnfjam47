@@ -97,7 +97,7 @@ class TitleState extends MusicBeatState
 						assetLibraryPaths: [
 							"exclude" => "exclude", "fonts" => "fonts", "songs" => "songs", "data" => "data", "images" => "images", "music" => "music",
 							"sounds" => "sounds", "shared" => "shared", "tutorial" => "tutorial", "tutorial_high" => "tutorial_high", "videos" => "videos",
-							"week1" => "week1", "week2" => "week2", "week3" => "week3", "week4" => "week4", "week5" => "week5", "week6" => "week6",
+							"week1" => "week1", "week2" => "week2", "week3" => "week3", "week4" => "week4", "week5" => "week5", "week6" => "week6", "weekA" => "weekA",
 							"week1_high" => "week1_high", "week2_high" => "week2_high", "week3_high" => "week3_high", "week4_high" => "week4_high",
 							"week5_high" => "week5_high", "week6_high" => "week6_high"
 						]
