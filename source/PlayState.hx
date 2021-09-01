@@ -599,6 +599,7 @@ class PlayState extends MusicBeatState
 				bg.setGraphicSize(Std.int(bg.width * 0.9));
 				bg.updateHitbox();
 				add(bg);
+
 			default:
 				defaultCamZoom = 0.9;
 				curStage = 'stage';
@@ -676,6 +677,12 @@ class PlayState extends MusicBeatState
 				BF_Y += 220;
 				GF_X += 180;
 				GF_Y += 300;
+			case 'breakdance':
+				BF_X -= 100;
+				BF_Y -= 200;
+				GF_X -= 350;
+				GF_Y -= 200;
+			
 		}
 
 		gf = new Character(GF_X, GF_Y, gfVersion);
@@ -709,6 +716,12 @@ class PlayState extends MusicBeatState
 				tweenCamIn();
 			}
 		}
+
+		if (dad.curCharacter.startsWith('ace'))
+		{
+			camPos.x -= 200;
+		}
+
 
 		switch (curStage)
 		{
@@ -744,6 +757,15 @@ class PlayState extends MusicBeatState
 		if (curStage == 'spooky')
 		{
 			add(halloweenWhite);
+		}
+
+		if (curStage == 'breakdance')
+		{
+			var front:BGSprite = new BGSprite('front', -500, -300, 0.9, 0.9, null, false, 'weekA');
+			front.setGraphicSize(Std.int(front.width * 0.9));
+			front.updateHitbox();
+			front.alpha = 0.5;
+			add(front);
 		}
 
 		var lowercaseSong:String = SONG.song.toLowerCase();
@@ -3035,6 +3057,9 @@ class PlayState extends MusicBeatState
 					camFollow.y = boyfriend.getMidpoint().y - 200;
 				case 'school' | 'schoolEvil':
 					camFollow.x = boyfriend.getMidpoint().x - 200;
+					camFollow.y = boyfriend.getMidpoint().y - 200;
+				case 'breakdance':
+					camFollow.x = boyfriend.getMidpoint().x - 400;
 					camFollow.y = boyfriend.getMidpoint().y - 200;
 			}
 			camFollow.x -= boyfriend.cameraPosition[0];
