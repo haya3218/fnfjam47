@@ -198,6 +198,13 @@ class PlayState extends MusicBeatState
 	var santa:BGSprite;
 	var heyTimer:Float;
 
+	var bg:BGSprite;
+	var bg2:BGSprite;
+	var front:BGSprite;
+	var staticbg:BGSprite;
+	var staticbg2:BGSprite;
+	var staticfront:BGSprite;
+
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
@@ -592,13 +599,19 @@ class PlayState extends MusicBeatState
 					add(bg);
 				}
 
-			case 'crushed':
+			case 'crushed' | 'spades':
 				defaultCamZoom = 0.9;
 				curStage = 'breakdance';
-				var bg:BGSprite = new BGSprite('backbackground', -500, -300, 0.9, 0.9, null, false, 'weekA');
+				bg = new BGSprite('backbackground', -500, -300, 0.9, 0.9, null, false, 'weekA');
 				bg.setGraphicSize(Std.int(bg.width * 0.9));
 				bg.updateHitbox();
 				add(bg);
+
+				staticbg = new BGSprite('backback2', -500, -300, 0.9, 0.9, null, false, 'weekA');
+				staticbg.setGraphicSize(Std.int(staticbg.width * 0.9));
+				staticbg.updateHitbox();
+				staticbg.visible = false;
+				add(staticbg);
 
 			default:
 				defaultCamZoom = 0.9;
@@ -742,10 +755,16 @@ class PlayState extends MusicBeatState
 
 		if (curStage == 'breakdance')
 		{
-			var bg2:BGSprite = new BGSprite('background', -500, -300, 0.9, 0.9, null, false, 'weekA');
+			bg2 = new BGSprite('background', -500, -300, 0.9, 0.9, null, false, 'weekA');
 			bg2.setGraphicSize(Std.int(bg2.width * 0.9));
 			bg2.updateHitbox();
 			add(bg2);
+
+			staticbg2 = new BGSprite('back1', -500, -300, 0.9, 0.9, null, false, 'weekA');
+			staticbg2.setGraphicSize(Std.int(staticbg2.width * 0.9));
+			staticbg2.updateHitbox();
+			staticbg2.visible = false;
+			add(staticbg2);
 		}
 
 		add(dadGroup);
@@ -761,11 +780,18 @@ class PlayState extends MusicBeatState
 
 		if (curStage == 'breakdance')
 		{
-			var front:BGSprite = new BGSprite('front', -500, -300, 0.9, 0.9, null, false, 'weekA');
+			front = new BGSprite('front', -500, -300, 0.9, 0.9, null, false, 'weekA');
 			front.setGraphicSize(Std.int(front.width * 0.9));
 			front.updateHitbox();
 			front.alpha = 0.5;
 			add(front);
+
+			staticfront = new BGSprite('front 1', -500, -300, 0.9, 0.9, null, false, 'weekA');
+			staticfront.setGraphicSize(Std.int(staticfront.width * 0.9));
+			staticfront.updateHitbox();
+			staticfront.alpha = 0.5;
+			staticfront.visible = false;
+			add(staticfront);
 		}
 
 		var lowercaseSong:String = SONG.song.toLowerCase();
@@ -2416,6 +2442,27 @@ class PlayState extends MusicBeatState
 								animToPlay = 'singRIGHT';
 						}
 						dad.playAnim(animToPlay + altAnim, true);
+					}
+
+					switch(dad.curCharacter)
+					{
+						case 'ace':
+							if(SONG.song.toLowerCase() == 'spades')
+							{
+								FlxG.camera.shake(0.005, 0.2);
+								if(staticbg.visible)
+								{
+									staticbg.visible = false;
+									staticbg2.visible = false;
+									staticfront.visible = false;
+								}
+								else
+								{
+									staticbg.visible = true;
+									staticbg2.visible = true;
+									staticfront.visible = true;
+								}
+							}
 					}
 
 					dad.holdTimer = 0;
