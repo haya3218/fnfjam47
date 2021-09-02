@@ -695,7 +695,6 @@ class PlayState extends MusicBeatState
 				BF_Y -= 200;
 				GF_X -= 350;
 				GF_Y -= 200;
-			
 		}
 
 		gf = new Character(GF_X, GF_Y, gfVersion);
@@ -734,7 +733,6 @@ class PlayState extends MusicBeatState
 		{
 			camPos.x -= 200;
 		}
-
 
 		switch (curStage)
 		{
@@ -2444,13 +2442,13 @@ class PlayState extends MusicBeatState
 						dad.playAnim(animToPlay + altAnim, true);
 					}
 
-					switch(dad.curCharacter)
+					switch (dad.curCharacter)
 					{
 						case 'ace':
-							if(SONG.song.toLowerCase() == 'spades')
+							if (SONG.song.toLowerCase() == 'spades')
 							{
 								FlxG.camera.shake(0.005, 0.2);
-								if(staticbg.visible)
+								if (staticbg.visible)
 								{
 									staticbg.visible = false;
 									staticbg2.visible = false;
@@ -3054,6 +3052,83 @@ class PlayState extends MusicBeatState
 				FlxG.log.add('piss');
 				FlxG.log.add(val1);
 				FlxG.log.add(val2);
+
+			case 'Call Effect':
+				var val1:String = value1;
+				switch (val1)
+				{
+					case 'glass':
+						var glass:FlxSprite = new FlxSprite();
+						glass.loadGraphic(Paths.image('effects/glass' + FlxG.random.int(1, 3), 'weekA'));
+						glass.setGraphicSize(FlxG.width, FlxG.height);
+						glass.updateHitbox();
+						glass.antialiasing = ClientPrefs.globalAntialiasing;
+						glass.cameras = [camHUD];
+						add(glass);
+						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+						for (i in 0...targetsArray.length)
+						{
+							targetsArray[i].shake(0.5, 0.03);
+						}
+						FlxTween.tween(glass, {alpha: 0}, 1, {
+							onComplete: function(_)
+							{
+								remove(glass);
+							}
+						});
+					case 'skidmark':
+						var marks:FlxSprite = new FlxSprite();
+						marks.loadGraphic(Paths.image('effects/marks', 'weekA'));
+						marks.setGraphicSize(FlxG.width, FlxG.height);
+						marks.updateHitbox();
+						marks.antialiasing = ClientPrefs.globalAntialiasing;
+						marks.cameras = [camHUD];
+						add(marks);
+						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+						for (i in 0...targetsArray.length)
+						{
+							targetsArray[i].shake(0.5, 0.03);
+						}
+						new FlxTimer().start(10, function(_)
+						{
+							FlxTween.tween(marks, {alpha: 0}, 2, {
+								onComplete: function(_)
+								{
+									remove(marks);
+								}
+							});
+						});
+					case 'pinkfluffyunicornsdancingonrainbows' | 'rainbow':
+						var rBows:FlxSprite = new FlxSprite();
+						rBows.loadGraphic(Paths.image('effects/rainbow', 'weekA'));
+						rBows.setGraphicSize(FlxG.width, FlxG.height);
+						rBows.updateHitbox();
+						rBows.antialiasing = ClientPrefs.globalAntialiasing;
+						rBows.cameras = [camHUD];
+						add(rBows);
+						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+						for (i in 0...targetsArray.length)
+						{
+							targetsArray[i].shake(0.5, 0.03);
+						}
+						var colorSwap = new ColorSwap();
+						rBows.shader = colorSwap.shader;
+						var rainbowing:Bool = true;
+						while (rainbowing)
+						{
+							colorSwap.hue = FlxG.random.int(0, 360);
+						}
+						new FlxTimer().start(10, function(_)
+						{
+							FlxTween.tween(rBows, {alpha: 0}, 2, {
+								onComplete: function(_)
+								{
+									rainbowing = false;
+									remove(rBows);
+								}
+							});
+						});
+				}
 		}
 		if (!onLua)
 		{
