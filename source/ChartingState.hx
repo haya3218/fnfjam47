@@ -105,7 +105,13 @@ class ChartingState extends MusicBeatState
 		[
 			'Tipsy Notes',
 			"Value 1: How much spacing between the arrows on the y axis\n(0.01 and below makes it stand still)\nValue 2: How much tipsyness"
-		]
+		],
+		[
+			'Call Effect',
+			"Value 1: What effect to show onscreen\n(glass, skidmark, rainbow)"
+		],
+		['Revert Camera Skew', "Says it all."],
+		['Skew Camera', "Says it all."]
 	];
 
 	var _file:FileReference;

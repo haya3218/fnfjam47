@@ -18,6 +18,7 @@ class SmthState extends MusicBeatState
 	var sonic:FlxSprite;
 	var soundList:Array<String> = [];
 	var soundNum:FlxText;
+	var soundInputs:Array<Int> = [];
 
 	override function create()
 	{
@@ -33,7 +34,9 @@ class SmthState extends MusicBeatState
 		// put in sounds in soundList array
 		soundList = FileSystem.readDirectory('assets/sounds/');
 		var sharedSounds = FileSystem.readDirectory('assets/shared/sounds/');
-		soundList = soundList.concat(sharedSounds);
+		soundList = sharedSounds;
+
+		soundInputs = [];
 
 		var soundText = new FlxText().setFormat(Paths.font("cd.otf"), 32, FlxColor.fromRGB(0, 163, 255), CENTER);
 		soundText.setBorderStyle(FlxTextBorderStyle.SHADOW, FlxColor.BLACK, 5);
@@ -53,6 +56,9 @@ class SmthState extends MusicBeatState
 		soundNum.x -= soundNum.width / 2;
 		add(soundNum);
 
+		soundText.y -= 150;
+		soundNum.y -= 150;
+
 		FlxG.sound.music.stop();
 	}
 
@@ -71,6 +77,10 @@ class SmthState extends MusicBeatState
 		{
 			var parsedNum:Int = Std.parseInt(soundNum.text);
 			FlxG.sound.playMusic(Paths.sound(soundList[parsedNum].replace('.ogg', ''), 'shared'), 1, false);
+			if (parsedNum == 12 || parsedNum == 15)
+				soundInputs.push(parsedNum);
+			if (soundInputs == [12, 15, 12])
+				MusicBeatState.switchState(new TrolledState());
 		}
 	}
 
@@ -84,25 +94,19 @@ class SmthState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.RIGHT)
 		{
-			var prefix = "";
-			if (Std.parseInt(soundNum.text) < 10)
-				prefix = "0";
-			var secondText = prefix + (Std.parseInt(soundNum.text) + 1);
+			var secondText = Std.string(Std.parseInt(soundNum.text) + 1);
 			soundNum.text = secondText;
 		}
 
 		if (FlxG.keys.justPressed.LEFT)
 		{
-			var prefix = "";
-			if (Std.parseInt(soundNum.text) < 10)
-				prefix = "0";
-			var secondText = prefix + (Std.parseInt(soundNum.text) - 1);
+			var secondText = Std.string(Std.parseInt(soundNum.text) - 1);
 			soundNum.text = secondText;
 		}
 
-		if (soundNum.text == "0-1")
+		if (soundNum.text == "-1")
 		{
-			soundNum.text = Std.string(soundList.length);
+			soundNum.text = Std.string(soundList.length - 1);
 		}
 
 		if (soundNum.text == "" + (soundList.length))

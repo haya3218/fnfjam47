@@ -1,5 +1,6 @@
 package;
 
+import openfl.geom.Matrix;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -255,6 +256,9 @@ class PlayState extends MusicBeatState
 	// sample: mods = [[0, 7, 0, 100, 'flip'], [7, 1, 100, 0, 'reverse']]
 	public var mods:Array<Array<Dynamic>> = [];
 
+	var matrix:Matrix;
+	var matrixHUD:Matrix;
+
 	override public function create()
 	{
 		if (FlxG.sound.music != null)
@@ -266,6 +270,9 @@ class PlayState extends MusicBeatState
 		arrowPosY2 = [0, 0, 0, 0];
 		arrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
 		enemyArrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
+
+		matrix = new Matrix();
+		matrixHUD = new Matrix();
 
 		practiceMode = false;
 		// var gameCam:FlxCamera = FlxG.camera;
@@ -3064,6 +3071,26 @@ class PlayState extends MusicBeatState
 				FlxG.log.add(val1);
 				FlxG.log.add(val2);
 
+			case 'Revert Camera Skew':
+				var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+				for (i in 0...targetsArray.length)
+				{
+					targetsArray[i].flashSprite.transform.matrix = new Matrix(1, 0, 0, 1, 0, 0);
+				}
+
+			case 'Skew Camera':
+				var val1:Float = Std.parseFloat(value1);
+				var val2:Float = Std.parseFloat(value2);
+				if (Math.isNaN(val1))
+					val1 = 0;
+				if (Math.isNaN(val2))
+					val2 = 0;
+				var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+				for (i in 0...targetsArray.length)
+				{
+					targetsArray[i].flashSprite.transform.matrix = new Matrix(1, val2, val1, 1, 0, 0);
+				}
+
 			case 'Call Effect':
 				var val1:String = value1;
 				switch (val1)
@@ -3071,17 +3098,19 @@ class PlayState extends MusicBeatState
 					case 'glass':
 						var glass:FlxSprite = new FlxSprite();
 						glass.loadGraphic(Paths.image('effects/glass' + FlxG.random.int(1, 3), 'weekA'));
-						glass.setGraphicSize(FlxG.width, FlxG.height);
-						glass.updateHitbox();
+						// glass.setGraphicSize(FlxG.width, FlxG.height);
+						// glass.updateHitbox();
+						glass.x = FlxG.random.float(-100, 100);
+						glass.y = FlxG.random.float(-100, 100);
 						glass.antialiasing = ClientPrefs.globalAntialiasing;
 						glass.cameras = [camHUD];
 						add(glass);
 						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
 						for (i in 0...targetsArray.length)
 						{
-							targetsArray[i].shake(0.5, 0.03);
+							targetsArray[i].shake(0.05, 1);
 						}
-						FlxTween.tween(glass, {alpha: 0}, 1, {
+						FlxTween.tween(glass, {alpha: 0}, 4, {
 							onComplete: function(_)
 							{
 								remove(glass);
@@ -3095,11 +3124,6 @@ class PlayState extends MusicBeatState
 						marks.antialiasing = ClientPrefs.globalAntialiasing;
 						marks.cameras = [camHUD];
 						add(marks);
-						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
-						for (i in 0...targetsArray.length)
-						{
-							targetsArray[i].shake(0.5, 0.03);
-						}
 						new FlxTimer().start(10, function(_)
 						{
 							FlxTween.tween(marks, {alpha: 0}, 2, {
@@ -3120,21 +3144,13 @@ class PlayState extends MusicBeatState
 						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
 						for (i in 0...targetsArray.length)
 						{
-							targetsArray[i].shake(0.5, 0.03);
-						}
-						var colorSwap = new ColorSwap();
-						rBows.shader = colorSwap.shader;
-						var rainbowing:Bool = true;
-						while (rainbowing)
-						{
-							colorSwap.hue = FlxG.random.int(0, 360);
+							targetsArray[i].shake(0.05, 0.03);
 						}
 						new FlxTimer().start(10, function(_)
 						{
 							FlxTween.tween(rBows, {alpha: 0}, 2, {
 								onComplete: function(_)
 								{
-									rainbowing = false;
 									remove(rBows);
 								}
 							});
