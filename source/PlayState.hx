@@ -1,5 +1,6 @@
 package;
 
+import haxe.Exception;
 import openfl.geom.Matrix;
 #if desktop
 import Discord.DiscordClient;
