@@ -4,13 +4,21 @@ Using Psych Engine cos we feel like it.
 
 ## Credits
 cattekween - Main Director/Artist and Animator
+
 saqmod - Main Coder
+
 santi - Secondary Coder/Charter
+
 haya3218 - Third Coder/Secondary Animator
+
 Stash Club - Musician
+
 
 ## Special Thanks
 FriedFrick - friedfrick
+
 PolybiusProxy - video code
+
 gedehari - Crash handler code
+
 and YOU, for playing the mod idfk
