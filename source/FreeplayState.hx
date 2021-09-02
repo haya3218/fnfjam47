@@ -23,14 +23,7 @@ using StringTools;
 class FreeplayState extends MusicBeatState
 {
 	// Character head icons for your songs
-	static var songsHeads:Array<Dynamic> = [
-		['dad'], // Week 1
-		['spooky', 'spooky', 'monster'], // Week 2
-		['pico'], // Week 3
-		['mom'], // Week 4
-		['parents', 'parents', 'monster'], // Week 5
-		['senpai', 'senpai', 'spirit'] // Week 6
-	];
+	static var songsHeads:Array<Dynamic> = [['ace']];
 
 	var songs:Array<SongMetadata> = [];
 
@@ -98,9 +91,9 @@ class FreeplayState extends MusicBeatState
 		 */
 
 		addSong('Hill', 0, 'bf', 0xFF8B0000);
-		addSong('Crushed', 0, 'bf', 0xFF8B0000);
+		addSong('Crushed', 1, 'bf', 0xFF8B0000);
 
-		addSong('Spades', 0, 'bf', 0xFF8B0000);
+		addSong('Spades', 1, 'bf', 0xFF8B0000);
 		// holy shit
 		addSong('', 0, 'bf', 0xFF8B0000);
 		addSong('', 0, 'bf', 0xFF8B0000);

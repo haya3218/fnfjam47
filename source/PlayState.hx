@@ -260,6 +260,13 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
+		arrowPos = [0, 0, 0, 0];
+		arrowPos2 = [0, 0, 0, 0];
+		arrowPosY = [0, 0, 0, 0];
+		arrowPosY2 = [0, 0, 0, 0];
+		arrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
+		enemyArrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
+
 		practiceMode = false;
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
