@@ -1,0 +1,4 @@
+ace:left bf:right
+:0:normal:0.05:normal:I used to work with that Mother dearest guy.   
+:0:normal:0.05:normal:It really changed my perspective.
+:0:normal:0.05:normal:Like, am I even real? Are you even real?
