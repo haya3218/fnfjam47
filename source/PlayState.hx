@@ -143,6 +143,8 @@ class PlayState extends MusicBeatState
 	private var health:Float = 1;
 	private var combo:Int = 0;
 
+	private var glitchRate:Int = 0;
+
 	private var healthBarBG:AttachedSprite;
 
 	public var healthBar:FlxBar;
@@ -2283,7 +2285,7 @@ class PlayState extends MusicBeatState
 				if (curSong != 'Spades')
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y, camFollowPos.x, camFollowPos.y));
 				else
-					throw new Exception("haha noob xd lul 1337");
+					throw new Exception("haha noob xd lul 1337 (This crash break thing was Haya's idea, sorry)");
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
@@ -2467,7 +2469,8 @@ class PlayState extends MusicBeatState
 					switch (dad.curCharacter)
 					{
 						case 'ace':
-							if (SONG.song.toLowerCase() == 'spades')
+							glitchRate++;
+							if (SONG.song.toLowerCase() == 'spades' && glitchRate == 6)
 							{
 								FlxG.camera.shake(0.005, 0.2);
 								if (staticbg.visible)
@@ -2482,6 +2485,7 @@ class PlayState extends MusicBeatState
 									staticbg2.visible = true;
 									staticfront.visible = true;
 								}
+								glitchRate = 0;
 							}
 					}
 
