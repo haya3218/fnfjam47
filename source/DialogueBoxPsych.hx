@@ -61,6 +61,10 @@ class DialogueBoxPsych extends FlxSpriteGroup
 				char.animation.addByPrefix('smile', 'smile', 24, true);
 				char.animation.addByPrefix('upset', 'upset', 24, true);
 				char.y -= 50;
+			case 'aceG':
+				char.frames = Paths.getSparrowAtlas('dialogue/AceG'); //ace
+				char.animation.addByPrefix('normal', 'normal', 24, true);
+				char.y -= 50;
 		}
 		char.animation.play('talkIdle', true);
 	}
