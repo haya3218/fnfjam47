@@ -20,6 +20,16 @@ class MenuCharacter extends FlxSprite
 		this.character = character;
 		antialiasing = ClientPrefs.globalAntialiasing;
 
+		if (character == '')
+		{
+			visible = false;
+				
+		}
+		else
+		{
+			visible = true;
+		}
+
 		switch(character) {
 			case 'bf':
 				frames = Paths.getSparrowAtlas('menucharacters/Menu_BF');

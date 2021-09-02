@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="Ace_Dialogue.png">
+<SubTexture name="normal0000" x="0" y="0" width="304" height="504" frameX="0" frameY="0" frameWidth="304" frameHeight="504" />
+<SubTexture name="sad0000" x="304" y="0" width="304" height="504" frameX="0" frameY="0" frameWidth="304" frameHeight="504" />
+<SubTexture name="smile0000" x="608" y="0" width="304" height="504" frameX="0" frameY="0" frameWidth="304" frameHeight="504" />
+<SubTexture name="upset0000" x="912" y="0" width="304" height="504" frameX="0" frameY="0" frameWidth="304" frameHeight="504" />
+</TextureAtlas>
