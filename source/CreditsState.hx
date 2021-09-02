@@ -41,7 +41,8 @@ class CreditsState extends MusicBeatState
 			0xFF5165F6
 		],
 		[
-			'santups',
+			//changed my own name cause i didnt like it lmaooooo
+			'santi',
 			'santi',
 			'Secondary Coder and Charter',
 			'https://twitter.com/santups132',

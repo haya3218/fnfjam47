@@ -2285,7 +2285,7 @@ class PlayState extends MusicBeatState
 				if (curSong != 'Spades')
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y, camFollowPos.x, camFollowPos.y));
 				else
-					throw new Exception("haha noob xd lul 1337 (This crash break thing was Haya's idea, sorry)");
+					throw new Exception("Fatal Error: Friday Night Funkin' VS ACE has shut down, error message: YOU FUYCKING SUCK LMAOO!O!OO!O!");
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 

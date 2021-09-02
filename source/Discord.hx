@@ -14,7 +14,7 @@ class DiscordClient
 		#if sys
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "863222024192262205",
+			clientID: "883027475540615218",
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -46,7 +46,7 @@ class DiscordClient
 			details: "In the Menus",
 			state: null,
 			largeImageKey: 'icon',
-			largeImageText: "Psych Engine"
+			largeImageText: "Friday Night Funkin: VS Ace"
 		});
 		#end
 	}
