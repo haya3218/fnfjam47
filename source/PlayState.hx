@@ -1047,7 +1047,11 @@ class PlayState extends MusicBeatState
 					if (daSong == 'roses')
 						FlxG.sound.play(Paths.sound('ANGRY'));
 					schoolIntro(doof);
-
+				case 'crushed':
+					inCutscene = true;
+					new FlxTimer().start(0.8, function(tmr:FlxTimer){
+						dialogueIntro(dialogue);
+					});
 				default:
 					startCountdown();
 			}

@@ -1,0 +1,10 @@
+ace:left bf:right
+:0:normal:0.05:normal:Holy shit, took you a while to get here. 
+:1:talk:0.05:normal:We thought this place was abandoned!
+:1:talk:0.05:normal:You have a better studio than this, right? 
+:1:talk:0.05:normal:This place is covered in junk.   
+:0:normal:0.05:normal:Uh, no. I also use this place to keep my....
+:0:normal:0.05:normal:... stuff.
+:1:talk:0.05:normal:could we get started with the recording?
+:1:talk:0.05:normal:I’ve got plans after this
+:0:normal:0.05:normal:sure you do.
