@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.effects.chainable.FlxGlitchEffect;
 import haxe.Exception;
 import openfl.geom.Matrix;
 #if desktop
@@ -209,6 +210,9 @@ class PlayState extends MusicBeatState
 	var staticbg2:BGSprite;
 	var staticfront:BGSprite;
 
+	// var glitchBG:FlxEffectSprite;
+	// var glitchBG2:FlxEffectSprite;
+	// var glitchfront:FlxEffectSprite;
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 	var bgGhouls:BGSprite;
@@ -299,11 +303,17 @@ class PlayState extends MusicBeatState
 		if (SONG == null)
 			SONG = Song.loadFromJson('tutorial');
 
+		SONG.speed = SONG.speed;
+
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
 		var songName:String = SONG.song;
 		displaySongName = StringTools.replace(songName, '-', ' ');
+
+		actualSpeed = SONG.speed;
+		speedLerp = SONG.speed;
+		actualSpeed = SONG.speed;
 
 		#if desktop
 		storyDifficultyText = '' + CoolUtil.difficultyStuff[storyDifficulty][0];
@@ -327,6 +337,9 @@ class PlayState extends MusicBeatState
 		// String for when the game is paused
 		detailsPausedText = "Paused - " + detailsText;
 		#end
+
+		var randomGlitchShader = new FlxGlitchEffect(4, 1, 0.05, HORIZONTAL);
+		var randomWaveShader = new FlxWaveEffect(ALL, 5, -1, 3, 5);
 
 		switch (SONG.song.toLowerCase())
 		{
@@ -628,7 +641,18 @@ class PlayState extends MusicBeatState
 				staticbg.setGraphicSize(Std.int(staticbg.width * 0.9));
 				staticbg.updateHitbox();
 				staticbg.visible = false;
+				wiggleShit.waveSpeed = 10.0;
+				wiggleShit.waveFrequency = 50.0;
+				wiggleShit.waveAmplitude = 0.01;
+				staticbg.shader = wiggleShit.shader;
+
 				add(staticbg);
+
+			// glitchBG = new FlxEffectSprite(staticbg, [randomGlitchShader, randomWaveShader]);
+			// glitchBG.scale.set(0.9, 0.9);
+			// glitchBG.updateHitbox();
+			// glitchBG.visible = false;
+			// add(glitchBG);
 
 			default:
 				defaultCamZoom = 0.9;
@@ -779,7 +803,15 @@ class PlayState extends MusicBeatState
 			staticbg2.setGraphicSize(Std.int(staticbg2.width * 0.9));
 			staticbg2.updateHitbox();
 			staticbg2.visible = false;
+
+			staticbg2.shader = wiggleShit.shader;
 			add(staticbg2);
+
+			// glitchBG2 = new FlxEffectSprite(staticbg2, [randomGlitchShader, randomWaveShader]);
+			// glitchBG2.scale.set(0.9, 0.9);
+			// glitchBG2.updateHitbox();
+			// glitchBG2.visible = false;
+			// add(glitchBG2);
 		}
 
 		add(dadGroup);
@@ -806,7 +838,14 @@ class PlayState extends MusicBeatState
 			staticfront.updateHitbox();
 			staticfront.alpha = 0.5;
 			staticfront.visible = false;
+			staticfront.shader = wiggleShit.shader;
 			add(staticfront);
+
+			// glitchfront = new FlxEffectSprite(staticfront, [randomGlitchShader, randomWaveShader]);
+			// glitchfront.scale.set(0.9, 0.9);
+			// glitchfront.updateHitbox();
+			// glitchfront.visible = false;
+			// add(glitchfront);
 		}
 
 		var lowercaseSong:String = SONG.song.toLowerCase();
@@ -1059,7 +1098,8 @@ class PlayState extends MusicBeatState
 					schoolIntro(doof);
 				case 'crushed' | 'spades':
 					inCutscene = true;
-					new FlxTimer().start(0.8, function(tmr:FlxTimer){
+					new FlxTimer().start(0.8, function(tmr:FlxTimer)
+					{
 						dialogueIntro(dialogue);
 					});
 				default:
@@ -1485,6 +1525,8 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
+		// speedLerp = songData.speed;
+
 		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
 		else
@@ -1506,23 +1548,26 @@ class PlayState extends MusicBeatState
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
 		var songName:String = SONG.song.toLowerCase();
-		var file:String = Paths.json(songName + '/events');
-		#if sys
-		if (sys.FileSystem.exists(file))
+		if (ClientPrefs.flashing) // disable the wAcKy eFfEcTs for people that have skill issues or have epilepsy
 		{
-		#else
-		if (OpenFlAssets.exists(file))
-		{
-		#end
-			var eventsData:Array<SwagSection> = Song.loadFromJson('events', songName).notes;
-			for (section in eventsData)
+			var file:String = Paths.json(songName + '/events');
+			#if sys
+			if (sys.FileSystem.exists(file))
 			{
-				for (songNotes in section.sectionNotes)
+			#else
+			if (OpenFlAssets.exists(file))
+			{
+			#end
+				var eventsData:Array<SwagSection> = Song.loadFromJson('events', songName).notes;
+				for (section in eventsData)
 				{
-					if (songNotes[1] < 0)
+					for (songNotes in section.sectionNotes)
 					{
-						eventNotes.push(songNotes);
-						eventPushed(songNotes);
+						if (songNotes[1] < 0)
+						{
+							eventNotes.push(songNotes);
+							eventPushed(songNotes);
+						}
 					}
 				}
 			}
@@ -1918,6 +1963,11 @@ class PlayState extends MusicBeatState
 	var tLerpNoteSpd:Float = 0;
 	var notePos:Float = 0;
 
+	// i mean...
+	var speedLerp:Float = 0.00;
+	var actualSpeed:Float = 0.00;
+	var ohoho:Bool = false;
+
 	override public function update(elapsed:Float)
 	{
 		#if !debug
@@ -2084,6 +2134,8 @@ class PlayState extends MusicBeatState
 		}
 
 		super.update(elapsed); // TEST
+
+		wiggleShit.update(elapsed);
 
 		if (ratingString == '?')
 		{
@@ -2282,6 +2334,7 @@ class PlayState extends MusicBeatState
 				vocals.stop();
 				FlxG.sound.music.stop();
 
+				// skill issue
 				if (curSong != 'Spades')
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y, camFollowPos.x, camFollowPos.y));
 				else
@@ -2296,9 +2349,18 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (speedLerp != actualSpeed)
+		{
+			actualSpeed = FlxMath.lerp(actualSpeed, speedLerp, 0.07 * (FlxG.drawFramerate / 60));
+		}
+		var roundedSpeed:Float = FlxMath.roundDecimal(actualSpeed, 2);
 		if (unspawnNotes[0] != null)
 		{
-			if (unspawnNotes[0].strumTime - Conductor.songPosition < 1500)
+			var time:Float = 1500;
+			if (roundedSpeed < 1)
+				time /= roundedSpeed;
+
+			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
 			{
 				var dunceNote:Note = unspawnNotes[0];
 				notes.add(dunceNote);
@@ -2310,9 +2372,23 @@ class PlayState extends MusicBeatState
 
 		if (generatedMusic)
 		{
-			var roundedSpeed:Float = FlxMath.roundDecimal(SONG.speed, 2);
+			// var roundedSpeed:Float = FlxMath.roundDecimal(SONG.speed, 2);
 			var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
 			var fakeCrochet2:Float = (Conductor.songPosition / 1000) * (SONG.bpm / 60);
+
+			if (ohoho)
+			{
+				var random1 = FlxG.random.int(0, 3);
+				var random2 = FlxG.random.int(0, 3);
+
+				if (random1 == random2)
+				{
+					random1 = FlxG.random.int(0, 3);
+					random2 = FlxG.random.int(0, 3);
+				}
+				swapNotesOnStrum(random1, random2, opponentStrums, enemyArrowPositions, 0.01, 0, 0);
+				swapNotesOnStrum(random1, random2, playerStrums, arrowPositions, 0.01, 0, 0);
+			}
 
 			for (i in 0...4)
 			{
@@ -2336,6 +2412,11 @@ class PlayState extends MusicBeatState
 					var piss2 = Math.floor(arrowPosY2[i]) + tLerpNoteVal * Math.cos((fakeCrochet2 + i * tLerpNoteSpd) * Math.PI);
 					opponentStrums.members[i].y = piss;
 					playerStrums.members[i].y = piss2;
+				}
+				else
+				{
+					opponentStrums.members[i].y = FlxMath.lerp(opponentStrums.members[i].y, strumLine.y, 0.07 * (FlxG.drawFramerate / 60));
+					playerStrums.members[i].y = FlxMath.lerp(playerStrums.members[i].y, strumLine.y, 0.07 * (FlxG.drawFramerate / 60));
 				}
 			}
 
@@ -2376,9 +2457,37 @@ class PlayState extends MusicBeatState
 				if (!daNote.isSustainNote)
 					daNote.x = strumX;
 				else
-					daNote.x = strumX + 38;
+				{
+					// ez fix for incredibly ocd triggering sustains
+					if (daNote.noteData != 1)
+						daNote.x = strumX + 38;
+					else
+						daNote.x = strumX + 36;
+				}
 
 				// daNote.x = FlxMath.lerp(daNote.x, notePos, 0.07 * (FlxG.drawFramerate / 60));
+				var strumScaleX:Float = 0;
+				if (daNote.mustPress)
+					strumScaleX = playerStrums.members[daNote.noteData].scale.x;
+				else
+					strumScaleX = opponentStrums.members[daNote.noteData].scale.x;
+				var strumScaleY:Float = 0;
+				if (daNote.mustPress)
+					strumScaleY = playerStrums.members[daNote.noteData].scale.y;
+				else
+					strumScaleY = opponentStrums.members[daNote.noteData].scale.y;
+
+				if (strumScaleX > 0.9 || strumScaleY > 0.9)
+					daNote.scale.set(strumScaleX, strumScaleY);
+
+				if (speedLerp != actualSpeed)
+				{
+					if (daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end'))
+					{
+						daNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * actualSpeed;
+						daNote.updateHitbox();
+					}
+				}
 
 				if (ClientPrefs.downScroll)
 				{
@@ -2478,12 +2587,18 @@ class PlayState extends MusicBeatState
 									staticbg.visible = false;
 									staticbg2.visible = false;
 									staticfront.visible = false;
+									// glitchBG.visible = false;
+									// glitchBG2.visible = false;
+									// glitchfront.visible = false;
 								}
 								else
 								{
 									staticbg.visible = true;
 									staticbg2.visible = true;
 									staticfront.visible = true;
+									// glitchBG.visible = true;
+									// glitchBG2.visible = true;
+									// glitchfront.visible = true;
 								}
 								glitchRate = 0;
 							}
@@ -3052,6 +3167,9 @@ class PlayState extends MusicBeatState
 					val2 = 3;
 				swapNotesOnStrum(val1, val2, opponentStrums, enemyArrowPositions);
 
+			case 'Random Ass':
+				ohoho = !ohoho;
+
 			case 'Drunk Notes':
 				var val1:Float = Std.parseFloat(value1);
 				var val2:Int = Std.parseInt(value2);
@@ -3099,13 +3217,18 @@ class PlayState extends MusicBeatState
 					targetsArray[i].flashSprite.transform.matrix = new Matrix(1, val2, val1, 1, 0, 0);
 				}
 
+			case 'Change Speed':
+				var val1:Float = Std.parseFloat(value1);
+				speedLerp = val1;
+
 			case 'Call Effect':
 				var val1:String = value1;
 				switch (val1)
 				{
 					case 'glass':
+						var randomGlass = FlxG.random.int(1, 3);
 						var glass:FlxSprite = new FlxSprite();
-						glass.loadGraphic(Paths.image('effects/glass' + FlxG.random.int(1, 3), 'weekA'));
+						glass.loadGraphic(Paths.image('effects/glass' + randomGlass, 'weekA'));
 						// glass.setGraphicSize(FlxG.width, FlxG.height);
 						// glass.updateHitbox();
 						glass.x = FlxG.random.float(-100, 100);
@@ -3113,10 +3236,11 @@ class PlayState extends MusicBeatState
 						glass.antialiasing = ClientPrefs.globalAntialiasing;
 						glass.cameras = [camHUD];
 						add(glass);
+						FlxG.sound.play(Paths.sound('glass' + randomGlass));
 						var targetsArray:Array<FlxCamera> = [camGame, camHUD];
 						for (i in 0...targetsArray.length)
 						{
-							targetsArray[i].shake(0.05, 1);
+							targetsArray[i].shake(0.02, 0.2);
 						}
 						FlxTween.tween(glass, {alpha: 0}, 4, {
 							onComplete: function(_)
@@ -3235,7 +3359,8 @@ class PlayState extends MusicBeatState
 		camFollowPos.setPosition(x, y);
 	}
 
-	public function swapNotesOnStrum(note1:Int, note2:Int, strums:FlxTypedGroup<StrumNote>, arrowPos:Array<Float>)
+	public function swapNotesOnStrum(note1:Int, note2:Int, strums:FlxTypedGroup<StrumNote>, arrowPos:Array<Float>, xDur:Float = 0.3, rotStart:Float = 0.25,
+			rotEnd:Float = 0.125)
 	{ // Don't make questions.
 		if (note1 == note2)
 		{
@@ -3280,7 +3405,7 @@ class PlayState extends MusicBeatState
 					newX = lastArrowPositions[(i == 0 ? note2 : note1)];
 				if (spr != null)
 				{
-					FlxTween.tween(spr, {x: newX}, 0.3, {
+					FlxTween.tween(spr, {x: newX}, xDur, {
 						onComplete: function(twn:FlxTween)
 						{
 							trace('nothing');
@@ -3296,8 +3421,8 @@ class PlayState extends MusicBeatState
 					if (swapped)
 						rot = -rot;
 
-					FlxTween.tween(spr, {angle: rot}, 0.25, {ease: FlxEase.sineIn});
-					FlxTween.tween(spr, {angle: 0}, 0.125, {ease: FlxEase.linear, startDelay: 0.2});
+					FlxTween.tween(spr, {angle: rot}, rotStart, {ease: FlxEase.sineIn});
+					FlxTween.tween(spr, {angle: 0}, rotEnd, {ease: FlxEase.linear, startDelay: rotStart});
 				}
 				if (strums == opponentStrums)
 				{
@@ -3307,7 +3432,7 @@ class PlayState extends MusicBeatState
 				else
 				{
 					arrowPos[(i == 0 ? note1 : note2) + 4] = newX;
-					arrowPos2[(i == 0 ? note1 : note2) + 4] = newX;
+					arrowPos2[(i == 0 ? note1 : note2)] = newX;
 				}
 			}
 		}

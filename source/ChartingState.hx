@@ -111,7 +111,9 @@ class ChartingState extends MusicBeatState
 			"Value 1: What effect to show onscreen\n(glass, skidmark, rainbow)"
 		],
 		['Revert Camera Skew', "Says it all."],
-		['Skew Camera', "Says it all."]
+		['Skew Camera', "Says it all."],
+		['Change Speed', "Value 1: The speed to set to."],
+		['Random Ass', "HOLY SHI-"]
 	];
 
 	var _file:FileReference;

@@ -146,7 +146,7 @@ class Note extends FlxSprite
 
 		if (isSustainNote && prevNote != null)
 		{
-			alpha = 0.6;
+			// alpha = 0.6;
 			if (ClientPrefs.downScroll)
 				flipY = true;
 

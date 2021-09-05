@@ -140,7 +140,15 @@
 				"lengthInSteps": 16,
 				"altAnim": false,
 				"typeOfSection": 0,
-				"sectionNotes": [],
+				"sectionNotes": [
+					[
+						14666.6666666667,
+						-1,
+						"Call Effect",
+						"glass",
+						""
+					]
+				],
 				"bpm": 0,
 				"changeBPM": false,
 				"mustHitSection": false
@@ -158,7 +166,15 @@
 				"lengthInSteps": 16,
 				"altAnim": false,
 				"typeOfSection": 0,
-				"sectionNotes": [],
+				"sectionNotes": [
+					[
+						17333.3333333333,
+						-1,
+						"Call Effect",
+						"glass",
+						""
+					]
+				],
 				"bpm": 0,
 				"changeBPM": false,
 				"mustHitSection": false
@@ -234,6 +250,34 @@
 						"Flip Notes",
 						"3",
 						"2"
+					],
+					[
+						24083.3333333333,
+						-1,
+						"Call Effect",
+						"glass",
+						""
+					],
+					[
+						24416.6666666667,
+						-1,
+						"Call Effect",
+						"glass",
+						""
+					],
+					[
+						24750,
+						-1,
+						"Call Effect",
+						"glass",
+						""
+					],
+					[
+						25083.3333333333,
+						-1,
+						"Call Effect",
+						"glass",
+						""
 					]
 				],
 				"bpm": 0,
@@ -1553,6 +1597,24 @@
 						"2"
 					]
 				],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
 				"bpm": 0,
 				"changeBPM": false,
 				"mustHitSection": false

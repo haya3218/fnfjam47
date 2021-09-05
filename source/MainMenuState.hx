@@ -1,5 +1,9 @@
 package;
 
+import openfl.filters.ShaderFilter;
+import openfl.filters.BitmapFilterShader;
+import openfl.filters.BitmapFilter;
+import GlitchShader.Glitch;
 import openfl.media.Sound;
 #if desktop
 import Discord.DiscordClient;
@@ -24,7 +28,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = 'a0.0.1'; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = '1.1.0 (update)'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -45,6 +49,7 @@ class MainMenuState extends MusicBeatState
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
+	var wiggleStuff:WiggleEffect;
 
 	override function create()
 	{
@@ -117,14 +122,27 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "[Unnamed mod] v" + psychEngineVersion, 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Glitchy (G)haos v" + psychEngineVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
-		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(versionShit);
+		wiggleStuff = new WiggleEffect();
+		wiggleStuff.effectType = DREAMY_G;
+		wiggleStuff.waveAmplitude = 500.0;
+		wiggleStuff.waveSpeed = 500.0;
+		wiggleStuff.waveFrequency = 500.0;
+		versionShit.shader = wiggleStuff.shader;
+		var versionShit2:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
+		versionShit2.scrollFactor.set();
+		versionShit2.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShit2);
+		versionShit2.shader = wiggleStuff.shader;
+		bg.shader = wiggleStuff.shader;
+		magenta.shader = wiggleStuff.shader;
+		menuItems.forEach(function(spr:FlxSprite)
+		{
+			spr.shader = wiggleStuff.shader;
+		});
 
 		// NG.core.calls.event.logEvent('swag').send();
 
@@ -168,6 +186,10 @@ class MainMenuState extends MusicBeatState
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 5.6, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 
+		wiggleStuff.update(elapsed);
+		wiggleStuff.waveAmplitude = FlxMath.lerp(wiggleStuff.waveAmplitude, 0, lerpVal);
+		wiggleStuff.waveSpeed = FlxMath.lerp(wiggleStuff.waveSpeed, 0, lerpVal);
+		wiggleStuff.waveFrequency = FlxMath.lerp(wiggleStuff.waveFrequency, 0, lerpVal);
 		if (!selectedSomethin)
 		{
 			if (controls.UI_UP_P)

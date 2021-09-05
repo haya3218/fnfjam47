@@ -10,6 +10,8 @@ enum WiggleEffectType
 	HEAT_WAVE_HORIZONTAL;
 	HEAT_WAVE_VERTICAL;
 	FLAG;
+	DREAMY_G;
+	WAVY_G;
 }
 
 class WiggleEffect
@@ -76,6 +78,8 @@ class WiggleShader extends FlxShader
 		const int EFFECT_TYPE_HEAT_WAVE_HORIZONTAL = 2;
 		const int EFFECT_TYPE_HEAT_WAVE_VERTICAL = 3;
 		const int EFFECT_TYPE_FLAG = 4;
+		const int EFFECT_TYPE_DREAMY_G = 5;
+		const int EFFECT_TYPE_WAVY_G = 6;
 		
 		uniform int effectType;
 		
@@ -121,6 +125,16 @@ class WiggleShader extends FlxShader
 			{
 				y = sin(pt.y * uFrequency + 10.0 * pt.x + uTime * uSpeed) * uWaveAmplitude;
 				x = sin(pt.x * uFrequency + 5.0 * pt.y + uTime * uSpeed) * uWaveAmplitude;
+			}
+			else if (effectType == EFFECT_TYPE_DREAMY_G) 
+			{
+				float offsetX = cos(pt.y * uFrequency + uTime * uSpeed) * uWaveAmplitude;
+                pt.x += offsetX; // * (pt.y - 1.0); // <- Uncomment to stop bottom part of the screen from moving
+			}
+			else if (effectType == EFFECT_TYPE_WAVY_G) 
+			{
+				float offsetY = cos(pt.x * uFrequency + uTime * uSpeed) * uWaveAmplitude;
+				pt.y += offsetY; // * (pt.y - 1.0); // <- Uncomment to stop bottom part of the screen from moving
 			}
 			
 			return vec2(pt.x + x, pt.y + y);
