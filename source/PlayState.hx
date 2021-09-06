@@ -3278,11 +3278,11 @@ class PlayState extends MusicBeatState
 				var val1:Int = Std.parseInt(value1);
 				var val2:Float = Std.parseFloat(value2);
 
-				opponentStrums.members[val1].y -= val2;
-				playerStrums.members[val1].y -= val2;
+				FlxTween.tween(opponentStrums.members[val1], {y: opponentStrums.members[val1].y + val2}, 1, {ease: FlxEase.linear});
+				FlxTween.tween(playerStrums.members[val1], {y: opponentStrums.members[val1].y + val2}, 1, {ease: FlxEase.linear});
 
-				arrowPosY[val1] = opponentStrums.members[val1].y;
-				arrowPosY2[val1] = playerStrums.members[val1].y;
+				arrowPosY[val1] = val2;
+				arrowPosY2[val1] = val2;
 
 			case 'Call Effect':
 				var val1:String = value1;
@@ -3347,6 +3347,38 @@ class PlayState extends MusicBeatState
 								onComplete: function(_)
 								{
 									remove(rBows);
+								}
+							});
+						});
+
+					case 'suptile' | 'captions':
+						var split:Array<String> = value2.split(',');
+						var text:String = split[0].trim();
+						var time:Float = Std.parseFloat(split[1].trim());
+
+						if (text == null)
+						{
+							text = '';
+						}
+
+						if (Math.isNaN(time))
+						{
+							time = 1;
+						}
+
+						var shitass:FlxText = new FlxText(0, FlxG.height - 35, 0, text, 32);
+						shitass.setFormat('VCR OSD Mono', 32, FlxColor.WHITE, CENTER);
+						shitass.setBorderStyle(OUTLINE_FAST, FlxColor.BLACK, 3);
+						shitass.screenCenter(X);
+						shitass.cameras = [camHUD];
+						add(shitass);
+
+						new FlxTimer().start(time, function(_)
+						{
+							FlxTween.tween(shitass, {alpha: 0}, time, {
+								onComplete: function(_)
+								{
+									remove(shitass);
 								}
 							});
 						});

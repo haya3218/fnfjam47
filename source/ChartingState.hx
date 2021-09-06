@@ -113,7 +113,8 @@ class ChartingState extends MusicBeatState
 		['Revert Camera Skew', "Says it all."],
 		['Skew Camera', "Says it all."],
 		['Change Speed', "Value 1: The speed to set to."],
-		['Random Ass', "HOLY SHI-"]
+		['Random Ass', "HOLY SHI-"],
+		['Move Receptor Y', "Value 1: Y"]
 	];
 
 	var _file:FileReference;

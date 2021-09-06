@@ -1056,6 +1056,27 @@
 						"Skew Camera",
 						"1.5",
 						""
+					],
+					[
+						34350,
+						-1,
+						"Move Receptor Y",
+						"0",
+						"100"
+					],
+					[
+						33825,
+						-1,
+						"Move Receptor Y",
+						"0",
+						"-50"
+					],
+					[
+						34575,
+						-1,
+						"Move Receptor Y",
+						"0",
+						"-50"
 					]
 				],
 				"bpm": 0,
@@ -1122,6 +1143,13 @@
 						"Skew Camera",
 						"-1.5",
 						""
+					],
+					[
+						35250,
+						-1,
+						"Move Receptor Y",
+						"0",
+						"50"
 					]
 				],
 				"bpm": 0,
@@ -1461,18 +1489,18 @@
 						"5"
 					],
 					[
-						41775,
-						-1,
-						"Skew Camera",
-						"0",
-						"0"
-					],
-					[
 						41925,
 						-1,
 						"Skew Camera",
 						"100",
 						"100"
+					],
+					[
+						41475,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
 					]
 				],
 				"bpm": 0,
@@ -1534,20 +1562,6 @@
 						""
 					],
 					[
-						42525,
-						-1,
-						"Flip Notes",
-						"",
-						""
-					],
-					[
-						42600,
-						-1,
-						"Flip Notes",
-						"",
-						""
-					],
-					[
 						42675,
 						-1,
 						"Flip Notes",
@@ -1595,6 +1609,27 @@
 						"Flip Notes",
 						"",
 						""
+					],
+					[
+						42615,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						42603.75,
+						-1,
+						"Flip Notes",
+						"0",
+						"0"
+					],
+					[
+						42525,
+						-1,
+						"Flip Notes",
+						"0",
+						"0"
 					]
 				],
 				"bpm": 0,
@@ -1633,13 +1668,6 @@
 						"Flip Notes",
 						"",
 						""
-					],
-					[
-						43275,
-						-1,
-						"Skew Camera",
-						"0",
-						"0"
 					]
 				],
 				"bpm": 0,
@@ -2004,13 +2032,6 @@
 						""
 					],
 					[
-						56475,
-						-1,
-						"Add Camera Zoom",
-						"-0.25",
-						"-0.25"
-					],
-					[
 						56550,
 						-1,
 						"Add Camera Zoom",
@@ -2107,6 +2128,13 @@
 						"Add Camera Zoom",
 						"-0.25",
 						"-0.25"
+					],
+					[
+						56475,
+						-1,
+						"Change Speed",
+						"0.3",
+						"0"
 					]
 				],
 				"bpm": 0,
@@ -2118,13 +2146,6 @@
 				"altAnim": false,
 				"typeOfSection": 0,
 				"sectionNotes": [
-					[
-						57675,
-						-1,
-						"Add Camera Zoom",
-						"0",
-						"-0.1"
-					],
 					[
 						57825,
 						-1,
@@ -2229,6 +2250,13 @@
 						"Invert Notes",
 						"",
 						""
+					],
+					[
+						57675,
+						-1,
+						"Change Speed",
+						"1",
+						"0"
 					]
 				],
 				"bpm": 0,
@@ -2973,13 +3001,6 @@
 				"typeOfSection": 0,
 				"sectionNotes": [
 					[
-						67125,
-						-1,
-						"Add Camera Zoom",
-						"0",
-						"-0.05"
-					],
-					[
 						67050,
 						-1,
 						"Add Camera Zoom",
@@ -3083,6 +3104,13 @@
 						"Add Camera Zoom",
 						"0",
 						"-0.05"
+					],
+					[
+						67125,
+						-1,
+						"Change Speed",
+						"3",
+						"0"
 					]
 				],
 				"bpm": 0,
@@ -3558,6 +3586,20 @@
 						"Invert Notes",
 						"0.5",
 						"0.5"
+					],
+					[
+						76950,
+						-1,
+						"Skew Camera",
+						"100",
+						"100"
+					],
+					[
+						76955,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
 					]
 				],
 				"bpm": 0,
@@ -3960,20 +4002,6 @@
 				"typeOfSection": 0,
 				"sectionNotes": [
 					[
-						91200,
-						-1,
-						"Random Ass",
-						"3",
-						"0"
-					],
-					[
-						91500,
-						-1,
-						"Random Ass",
-						"3",
-						"0"
-					],
-					[
 						92025,
 						-1,
 						"Random Ass",
@@ -3997,20 +4025,6 @@
 				"altAnim": false,
 				"typeOfSection": 0,
 				"sectionNotes": [
-					[
-						92400,
-						-1,
-						"Random Ass",
-						"3",
-						"0"
-					],
-					[
-						92700,
-						-1,
-						"Random Ass",
-						"3",
-						"0"
-					],
 					[
 						93525,
 						-1,
@@ -4086,6 +4100,13 @@
 						"Random Ass",
 						"3",
 						"0"
+					],
+					[
+						95550,
+						-1,
+						"Call Effect",
+						"caption",
+						"penis,0.5"
 					]
 				],
 				"bpm": 0,
@@ -4259,6 +4280,13 @@
 						"Flip Notes",
 						"3",
 						"0"
+					],
+					[
+						100425,
+						-1,
+						"Call Effect",
+						"caption",
+						"penis,0.5"
 					]
 				],
 				"bpm": 0,
@@ -4297,6 +4325,13 @@
 						"Skew Camera",
 						"0",
 						"0"
+					],
+					[
+						101775,
+						-1,
+						"Call Effect",
+						"caption",
+						"aaaaawwwwwwwwe,0.25"
 					]
 				],
 				"bpm": 0,
@@ -4335,6 +4370,13 @@
 						"Skew Camera",
 						"-3",
 						"0"
+					],
+					[
+						102975,
+						-1,
+						"Call Effect",
+						"caption",
+						"fuck,0.25"
 					]
 				],
 				"bpm": 0,
@@ -4373,6 +4415,13 @@
 						"Skew Camera",
 						"3",
 						"3"
+					],
+					[
+						104175,
+						-1,
+						"Call Effect",
+						"caption",
+						"shit,0.35"
 					]
 				],
 				"bpm": 0,
@@ -4411,6 +4460,13 @@
 						"Skew Camera",
 						"0",
 						"0"
+					],
+					[
+						105375,
+						-1,
+						"Call Effect",
+						"caption",
+						"testicles,0.5"
 					]
 				],
 				"bpm": 0,
@@ -4449,6 +4505,13 @@
 						"Flip Notes",
 						"0",
 						"0"
+					],
+					[
+						106575,
+						-1,
+						"Call Effect",
+						"caption",
+						"butt,0.3"
 					]
 				],
 				"bpm": 0,
@@ -4601,6 +4664,41 @@
 						"Flip Notes",
 						"0",
 						"0"
+					],
+					[
+						110475,
+						-1,
+						"Tipsy Notes",
+						"0",
+						"0"
+					],
+					[
+						110550,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						110775,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						111075,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						111375,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
 					]
 				],
 				"bpm": 0,
@@ -4639,6 +4737,34 @@
 						"Invert Notes",
 						"0",
 						"0"
+					],
+					[
+						111675,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						111975,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						112275,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						112575,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
 					]
 				],
 				"bpm": 0,
@@ -4677,6 +4803,34 @@
 						"Flip Notes",
 						"0",
 						"0"
+					],
+					[
+						112875,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						113175,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						113475,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						113775,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
 					]
 				],
 				"bpm": 0,
@@ -4715,6 +4869,20 @@
 						"Flip Notes",
 						"0",
 						"0"
+					],
+					[
+						114375,
+						-1,
+						"Screen Shake",
+						"0",
+						"0.1"
+					],
+					[
+						114450,
+						-1,
+						"Skew Camera",
+						"0",
+						"5"
 					]
 				],
 				"bpm": 0,
@@ -4767,6 +4935,20 @@
 						"Flip Notes",
 						"0",
 						"0"
+					],
+					[
+						115950,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						116175,
+						-1,
+						"Skew Camera",
+						"0",
+						"-5"
 					]
 				],
 				"bpm": 0,
@@ -4810,6 +4992,27 @@
 						117450,
 						-1,
 						"Flip Notes",
+						"0",
+						"0"
+					],
+					[
+						116625,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						116850,
+						-1,
+						"Skew Camera",
+						"0",
+						"5"
+					],
+					[
+						117150,
+						-1,
+						"Skew Camera",
 						"0",
 						"0"
 					]
@@ -4856,6 +5059,48 @@
 						-1,
 						"Flip Notes",
 						"0",
+						"0"
+					],
+					[
+						117750,
+						-1,
+						"Skew Camera",
+						"5",
+						"2.5"
+					],
+					[
+						118200,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						118425,
+						-1,
+						"Skew Camera",
+						"5",
+						"0"
+					],
+					[
+						118500,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						118725,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						118650,
+						-1,
+						"Skew Camera",
+						"5",
 						"0"
 					]
 				],
@@ -4907,6 +5152,76 @@
 						119850,
 						-1,
 						"Flip Notes",
+						"0",
+						"0"
+					],
+					[
+						118875,
+						-1,
+						"Skew Camera",
+						"5",
+						"0"
+					],
+					[
+						119100,
+						-1,
+						"Skew Camera",
+						"5",
+						"0"
+					],
+					[
+						119325,
+						-1,
+						"Skew Camera",
+						"5",
+						"0"
+					],
+					[
+						119550,
+						-1,
+						"Skew Camera",
+						"5",
+						"0"
+					],
+					[
+						119775,
+						-1,
+						"Skew Camera",
+						"5",
+						"0"
+					],
+					[
+						119925,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						119625,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						119400,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						119175,
+						-1,
+						"Skew Camera",
+						"0",
+						"0"
+					],
+					[
+						118950,
+						-1,
+						"Skew Camera",
 						"0",
 						"0"
 					]
@@ -5486,6 +5801,69 @@
 						""
 					]
 				],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"bpm": 0,
+				"changeBPM": false,
+				"mustHitSection": false
+			},
+			{
+				"lengthInSteps": 16,
+				"altAnim": false,
+				"typeOfSection": 0,
+				"sectionNotes": [],
 				"bpm": 0,
 				"changeBPM": false,
 				"mustHitSection": false
