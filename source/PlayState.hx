@@ -120,6 +120,9 @@ class PlayState extends MusicBeatState
 	private var arrowPosY:Array<Float> = [0, 0, 0, 0];
 	private var arrowPosY2:Array<Float> = [0, 0, 0, 0];
 
+	private var iPos:Array<Float> = [0, 0, 0, 0];
+	private var iPos2:Array<Float> = [0, 0, 0, 0];
+
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
@@ -266,6 +269,27 @@ class PlayState extends MusicBeatState
 	var matrix:Matrix;
 	var matrixHUD:Matrix;
 
+	// drunk and tipsy shit
+	var drunkNoteVal:Float = 0;
+	var drunkNoteSpd:Float = 0.25;
+	var tipsyNoteVal:Float = 0;
+	var tipsyNoteSpd:Float = 0.25;
+	var dLerpNoteVal:Float = 0;
+	var dLerpNoteSpd:Float = 0;
+	var tLerpNoteVal:Float = 0;
+	var tLerpNoteSpd:Float = 0;
+	var notePos:Float = 0;
+
+	// i mean...
+	var speedLerp:Float = 0.00;
+	var actualSpeed:Float = 0.00;
+	var ohoho:Bool = false;
+
+	var yLerp:Float = 0;
+	var xLerp:Float = 0;
+	var ySkew:Float = 0;
+	var xSkew:Float = 0;
+
 	override public function create()
 	{
 		if (FlxG.sound.music != null)
@@ -275,8 +299,28 @@ class PlayState extends MusicBeatState
 		arrowPos2 = [0, 0, 0, 0];
 		arrowPosY = [0, 0, 0, 0];
 		arrowPosY2 = [0, 0, 0, 0];
+		iPos = [0, 0, 0, 0];
+		iPos2 = [0, 0, 0, 0];
 		arrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
 		enemyArrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
+		drunkNoteVal = 0;
+		drunkNoteSpd = 0.25;
+		tipsyNoteVal = 0;
+		tipsyNoteSpd = 0.25;
+		dLerpNoteVal = 0;
+		dLerpNoteSpd = 0;
+		tLerpNoteVal = 0;
+		tLerpNoteSpd = 0;
+		notePos = 0;
+
+		speedLerp = 0.00;
+		actualSpeed = 0.00;
+		ohoho = false;
+
+		yLerp = 0;
+		xLerp = 0;
+		ySkew = 0;
+		xSkew = 0;
 
 		matrix = new Matrix();
 		matrixHUD = new Matrix();
@@ -1313,14 +1357,24 @@ class PlayState extends MusicBeatState
 				arrowPos2[i] = playerStrums.members[i].x;
 			}
 
-			for (i in 0...arrowPos.length)
+			for (i in 0...arrowPosY.length)
 			{
 				arrowPosY[i] = opponentStrums.members[i].y;
 			}
 
-			for (i in 0...arrowPos2.length)
+			for (i in 0...arrowPosY2.length)
 			{
 				arrowPosY2[i] = playerStrums.members[i].y;
+			}
+
+			for (i in 0...iPos.length)
+			{
+				iPos[i] = opponentStrums.members[i].x;
+			}
+
+			for (i in 0...iPos2.length)
+			{
+				iPos2[i] = playerStrums.members[i].x;
 			}
 
 			for (i in 0...playerStrums.length)
@@ -1952,22 +2006,6 @@ class PlayState extends MusicBeatState
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
 
-	// drunk and tipsy shit
-	var drunkNoteVal:Float = 0;
-	var drunkNoteSpd:Float = 0.25;
-	var tipsyNoteVal:Float = 0;
-	var tipsyNoteSpd:Float = 0.25;
-	var dLerpNoteVal:Float = 0;
-	var dLerpNoteSpd:Float = 0;
-	var tLerpNoteVal:Float = 0;
-	var tLerpNoteSpd:Float = 0;
-	var notePos:Float = 0;
-
-	// i mean...
-	var speedLerp:Float = 0.00;
-	var actualSpeed:Float = 0.00;
-	var ohoho:Bool = false;
-
 	override public function update(elapsed:Float)
 	{
 		#if !debug
@@ -2420,6 +2458,13 @@ class PlayState extends MusicBeatState
 				}
 			}
 
+			if ((xSkew != xLerp) || (ySkew != yLerp))
+			{
+				xLerp = FlxMath.lerp(xLerp, xSkew, 0.07 * (FlxG.updateFramerate / 60));
+				yLerp = FlxMath.lerp(yLerp, ySkew, 0.07 * (FlxG.updateFramerate / 60));
+				camHUD.flashSprite.transform.matrix = new Matrix(1, yLerp, xLerp, 1, 0, 0);
+			}
+
 			notes.forEachAlive(function(daNote:Note)
 			{
 				if (daNote.y > FlxG.height)
@@ -2484,7 +2529,7 @@ class PlayState extends MusicBeatState
 				{
 					if (daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end'))
 					{
-						daNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * actualSpeed;
+						daNote.scale.y = Conductor.stepCrochet / 100 * 1.5 * actualSpeed;
 						daNote.updateHitbox();
 					}
 				}
@@ -3169,6 +3214,17 @@ class PlayState extends MusicBeatState
 
 			case 'Random Ass':
 				ohoho = !ohoho;
+				if (!ohoho)
+				{
+					new FlxTimer().start(0.1, function(_)
+					{
+						for (i in 0...iPos.length)
+						{
+							opponentStrums.members[i].x = iPos[i];
+							playerStrums.members[i].x = iPos2[i];
+						}
+					});
+				}
 
 			case 'Drunk Notes':
 				var val1:Float = Std.parseFloat(value1);
@@ -3211,15 +3267,22 @@ class PlayState extends MusicBeatState
 					val1 = 0;
 				if (Math.isNaN(val2))
 					val2 = 0;
-				var targetsArray:Array<FlxCamera> = [camGame, camHUD];
-				for (i in 0...targetsArray.length)
-				{
-					targetsArray[i].flashSprite.transform.matrix = new Matrix(1, val2, val1, 1, 0, 0);
-				}
+				xSkew = val2;
+				ySkew = val1;
 
 			case 'Change Speed':
 				var val1:Float = Std.parseFloat(value1);
 				speedLerp = val1;
+
+			case 'Move Receptor Y':
+				var val1:Int = Std.parseInt(value1);
+				var val2:Float = Std.parseFloat(value2);
+
+				opponentStrums.members[val1].y -= val2;
+				playerStrums.members[val1].y -= val2;
+
+				arrowPosY[val1] = opponentStrums.members[val1].y;
+				arrowPosY2[val1] = playerStrums.members[val1].y;
 
 			case 'Call Effect':
 				var val1:String = value1;

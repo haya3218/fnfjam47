@@ -77,15 +77,27 @@ class SmthState extends MusicBeatState
 		{
 			var parsedNum:Int = Std.parseInt(soundNum.text);
 			FlxG.sound.playMusic(Paths.sound(soundList[parsedNum].replace('.ogg', ''), 'shared'), 1, false);
-			if (parsedNum == 12 || parsedNum == 15)
-				soundInputs.push(parsedNum);
-			if (soundInputs == [12, 15, 12])
-				MusicBeatState.switchState(new TrolledState());
+			soundInputs.push(parsedNum);
+		}
+
+		if (FlxG.keys.pressed.U && FlxG.keys.pressed.H && FlxG.keys.pressed.E && FlxG.keys.pressed.K && FlxG.keys.pressed.W)
+		{
+			var songLowercase:String = 'testnotwo';
+			var poop:String = Highscore.formatSong(songLowercase, 0);
+
+			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+			PlayState.isStoryMode = false;
+			PlayState.storyDifficulty = 0;
+			PlayState.storyWeek = 0;
+			LoadingState.loadAndSwitchState(new PlayState());
 		}
 	}
 
 	function soundSelect()
 	{
+		if (soundInputs == [12, 15, 12])
+			MusicBeatState.switchState(new TrolledState());
+
 		var prefix = "";
 		if (Std.parseInt(soundNum.text) < 10)
 			prefix = "0";
