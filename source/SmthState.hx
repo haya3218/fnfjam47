@@ -1,5 +1,7 @@
 package;
 
+import flixel.util.FlxTimer;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxColor;
 import flixel.graphics.frames.FlxBitmapFont;
 import flixel.text.FlxBitmapText;
@@ -19,6 +21,8 @@ class SmthState extends MusicBeatState
 	var soundList:Array<String> = [];
 	var soundNum:FlxText;
 	var soundInputs:Array<Int> = [];
+
+	var so:Bool = false;
 
 	override function create()
 	{
@@ -60,6 +64,8 @@ class SmthState extends MusicBeatState
 		soundNum.y -= 150;
 
 		FlxG.sound.music.stop();
+
+		so = false;
 	}
 
 	override function update(elapsed:Float)
@@ -78,18 +84,37 @@ class SmthState extends MusicBeatState
 			var parsedNum:Int = Std.parseInt(soundNum.text);
 			FlxG.sound.playMusic(Paths.sound(soundList[parsedNum].replace('.ogg', ''), 'shared'), 1, false);
 			soundInputs.push(parsedNum);
+
+			if (parsedNum == 1)
+			{
+				var songLowercase:String = 'testnotwo';
+				var poop:String = Highscore.formatSong(songLowercase, 0);
+
+				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = 0;
+				PlayState.storyWeek = 0;
+				FlxTransitionableState.skipNextTransOut = true;
+				FlxG.camera.fade(FlxColor.WHITE, 0.31);
+				new FlxTimer().start(2, function(_)
+				{
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					LoadingState.loadAndSwitchState(new PlayState());
+				});
+			}
+			else
+			{
+				so = false;
+			}
 		}
 
-		if (FlxG.keys.pressed.U && FlxG.keys.pressed.H && FlxG.keys.pressed.E && FlxG.keys.pressed.K && FlxG.keys.pressed.W)
+		if (!so)
 		{
-			var songLowercase:String = 'testnotwo';
-			var poop:String = Highscore.formatSong(songLowercase, 0);
-
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = 0;
-			PlayState.storyWeek = 0;
-			LoadingState.loadAndSwitchState(new PlayState());
+			if (FlxG.keys.pressed.U && FlxG.keys.pressed.H && FlxG.keys.pressed.E && FlxG.keys.pressed.K && FlxG.keys.pressed.W)
+			{
+				so = true;
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+			}
 		}
 	}
 

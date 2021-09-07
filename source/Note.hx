@@ -315,8 +315,7 @@ class Note extends FlxSprite
 
 		if (tooLate)
 		{
-			if (alpha > 0.3)
-				alpha = 0.3;
+			FlxMath.lerp(alpha, 0, 0.17 * (FlxG.updateFramerate / 60));
 		}
 	}
 }

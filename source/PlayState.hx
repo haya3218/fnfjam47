@@ -123,6 +123,9 @@ class PlayState extends MusicBeatState
 	private var iPos:Array<Float> = [0, 0, 0, 0];
 	private var iPos2:Array<Float> = [0, 0, 0, 0];
 
+	private var iPosY:Array<Float> = [0, 0, 0, 0];
+	private var iPosY2:Array<Float> = [0, 0, 0, 0];
+
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
@@ -173,6 +176,7 @@ class PlayState extends MusicBeatState
 
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
+	public var camReceptors:FlxCamera;
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
@@ -301,6 +305,8 @@ class PlayState extends MusicBeatState
 		arrowPosY2 = [0, 0, 0, 0];
 		iPos = [0, 0, 0, 0];
 		iPos2 = [0, 0, 0, 0];
+		iPosY = [0, 0, 0, 0];
+		iPosY2 = [0, 0, 0, 0];
 		arrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
 		enemyArrowPositions = [0, 0, 0, 0, 0, 0, 0, 0];
 		drunkNoteVal = 0;
@@ -329,12 +335,15 @@ class PlayState extends MusicBeatState
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
+		camReceptors = new FlxCamera();
 		camOther = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
+		camReceptors.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
+		FlxG.cameras.add(camReceptors);
 		FlxG.cameras.add(camOther);
 		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
 
@@ -1032,9 +1041,9 @@ class PlayState extends MusicBeatState
 		}
 
 		// strumLinePsychicNotes.cameras = [camHUD];
-		strumLineNotes.cameras = [camHUD];
-		grpNoteSplashes.cameras = [camHUD];
-		notes.cameras = [camHUD];
+		strumLineNotes.cameras = [camReceptors];
+		grpNoteSplashes.cameras = [camReceptors];
+		notes.cameras = [camReceptors];
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
@@ -1375,6 +1384,16 @@ class PlayState extends MusicBeatState
 			for (i in 0...iPos2.length)
 			{
 				iPos2[i] = playerStrums.members[i].x;
+			}
+
+			for (i in 0...iPosY.length)
+			{
+				iPosY[i] = opponentStrums.members[i].y;
+			}
+
+			for (i in 0...iPosY2.length)
+			{
+				iPosY2[i] = playerStrums.members[i].y;
 			}
 
 			for (i in 0...playerStrums.length)
@@ -1838,9 +1857,8 @@ class PlayState extends MusicBeatState
 
 			if (!isStoryMode)
 			{
-				babyArrow.y -= 10;
 				babyArrow.alpha = 0;
-				FlxTween.tween(babyArrow, {y: babyArrow.y + 10, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
+				FlxTween.tween(babyArrow, {alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
 			}
 
 			babyArrow.ID = i;
@@ -2335,6 +2353,9 @@ class PlayState extends MusicBeatState
 			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 		}
 
+		camReceptors.visible = camHUD.visible;
+		camReceptors.zoom = camHUD.zoom;
+
 		FlxG.watch.addQuick("beatShit", curBeat);
 		FlxG.watch.addQuick("stepShit", curStep);
 
@@ -2453,8 +2474,8 @@ class PlayState extends MusicBeatState
 				}
 				else
 				{
-					opponentStrums.members[i].y = FlxMath.lerp(opponentStrums.members[i].y, strumLine.y, 0.07 * (FlxG.drawFramerate / 60));
-					playerStrums.members[i].y = FlxMath.lerp(playerStrums.members[i].y, strumLine.y, 0.07 * (FlxG.drawFramerate / 60));
+					opponentStrums.members[i].y = FlxMath.lerp(opponentStrums.members[i].y, iPosY[i], 0.07 * (FlxG.drawFramerate / 60));
+					playerStrums.members[i].y = FlxMath.lerp(playerStrums.members[i].y, iPosY2[i], 0.07 * (FlxG.drawFramerate / 60));
 				}
 			}
 
@@ -2462,7 +2483,8 @@ class PlayState extends MusicBeatState
 			{
 				xLerp = FlxMath.lerp(xLerp, xSkew, 0.07 * (FlxG.updateFramerate / 60));
 				yLerp = FlxMath.lerp(yLerp, ySkew, 0.07 * (FlxG.updateFramerate / 60));
-				camHUD.flashSprite.transform.matrix = new Matrix(1, yLerp, xLerp, 1, 0, 0);
+				// camHUD.flashSprite.transform.matrix = new Matrix(1, yLerp, xLerp, 1, 0, 0);
+				camReceptors.flashSprite.transform.matrix = new Matrix(1, yLerp, xLerp, 1, 0, 0);
 			}
 
 			notes.forEachAlive(function(daNote:Note)
@@ -3103,7 +3125,7 @@ class PlayState extends MusicBeatState
 
 			case 'Screen Shake':
 				var valuesArray:Array<String> = [value1, value2];
-				var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+				var targetsArray:Array<FlxCamera> = [camGame, camHUD, camReceptors];
 				for (i in 0...targetsArray.length)
 				{
 					var split:Array<String> = valuesArray[i].split(',');
@@ -3183,16 +3205,16 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Flip Notes':
-				swapNotesOnStrum(0, 3, playerStrums, arrowPositions);
-				swapNotesOnStrum(1, 2, playerStrums, arrowPositions);
-				swapNotesOnStrum(0, 3, opponentStrums, enemyArrowPositions);
-				swapNotesOnStrum(1, 2, opponentStrums, enemyArrowPositions);
+				swapNotesOnStrum(0, 3, playerStrums, arrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(1, 2, playerStrums, arrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(0, 3, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(1, 2, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
 
 			case 'Invert Notes':
-				swapNotesOnStrum(0, 1, playerStrums, arrowPositions);
-				swapNotesOnStrum(2, 3, playerStrums, arrowPositions);
-				swapNotesOnStrum(0, 1, opponentStrums, enemyArrowPositions);
-				swapNotesOnStrum(2, 3, opponentStrums, enemyArrowPositions);
+				swapNotesOnStrum(0, 1, playerStrums, arrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(2, 3, playerStrums, arrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(0, 1, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(2, 3, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
 
 			case 'Swap Notes':
 				var val1:Int = Std.parseInt(value1);
@@ -3254,7 +3276,7 @@ class PlayState extends MusicBeatState
 				FlxG.log.add(val2);
 
 			case 'Revert Camera Skew':
-				var targetsArray:Array<FlxCamera> = [camGame, camHUD];
+				var targetsArray:Array<FlxCamera> = [camGame, camHUD, camReceptors];
 				for (i in 0...targetsArray.length)
 				{
 					targetsArray[i].flashSprite.transform.matrix = new Matrix(1, 0, 0, 1, 0, 0);
@@ -3278,11 +3300,17 @@ class PlayState extends MusicBeatState
 				var val1:Int = Std.parseInt(value1);
 				var val2:Float = Std.parseFloat(value2);
 
-				FlxTween.tween(opponentStrums.members[val1], {y: opponentStrums.members[val1].y + val2}, 1, {ease: FlxEase.linear});
-				FlxTween.tween(playerStrums.members[val1], {y: opponentStrums.members[val1].y + val2}, 1, {ease: FlxEase.linear});
+				// FlxTween.tween(opponentStrums.members[val1], {y: opponentStrums.members[val1].y + val2}, 0.5, {ease: FlxEase.linear});
+				// FlxTween.tween(playerStrums.members[val1], {y: opponentStrums.members[val1].y + val2}, 0.5, {ease: FlxEase.linear});
 
-				arrowPosY[val1] = val2;
-				arrowPosY2[val1] = val2;
+				arrowPosY[val1] += val2;
+				arrowPosY2[val1] += val2;
+
+				// the shit just moves on its own
+				iPosY[val1] += val2;
+				iPosY2[val1] += val2;
+
+			case 'Reverse':
 
 			case 'Call Effect':
 				var val1:String = value1;
@@ -3351,19 +3379,14 @@ class PlayState extends MusicBeatState
 							});
 						});
 
-					case 'suptile' | 'captions':
-						var split:Array<String> = value2.split(',');
-						var text:String = split[0].trim();
-						var time:Float = Std.parseFloat(split[1].trim());
+					case 'suptile' | 'captions' | 'caption':
+						// var split:Array<String> = value2.split(',');
+						var text:String = value2;
+						// var time:Float = Std.parseFloat(split[1].trim());
 
 						if (text == null)
 						{
 							text = '';
-						}
-
-						if (Math.isNaN(time))
-						{
-							time = 1;
 						}
 
 						var shitass:FlxText = new FlxText(0, FlxG.height - 35, 0, text, 32);
@@ -3373,9 +3396,9 @@ class PlayState extends MusicBeatState
 						shitass.cameras = [camHUD];
 						add(shitass);
 
-						new FlxTimer().start(time, function(_)
+						new FlxTimer().start(0.5, function(_)
 						{
-							FlxTween.tween(shitass, {alpha: 0}, time, {
+							FlxTween.tween(shitass, {alpha: 0}, 0.2, {
 								onComplete: function(_)
 								{
 									remove(shitass);
