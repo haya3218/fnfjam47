@@ -19,6 +19,10 @@ FriedFrick - friedfrick
 
 PolybiusProxy - video code
 
-gedehari - Crash handler code
+gedehari - Crash handler code and quant note code
+
+Rozebud - Some chart editor code (better snaps as well as fixed must hit sections)
+
+Yoshubs - quant note code
 
 and YOU, for playing the mod idfk

@@ -87,20 +87,23 @@ class SmthState extends MusicBeatState
 
 			if (parsedNum == 1)
 			{
-				var songLowercase:String = 'testnotwo';
-				var poop:String = Highscore.formatSong(songLowercase, 0);
-
-				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-				PlayState.isStoryMode = false;
-				PlayState.storyDifficulty = 0;
-				PlayState.storyWeek = 0;
-				FlxTransitionableState.skipNextTransOut = true;
-				FlxG.camera.fade(FlxColor.WHITE, 0.31);
-				new FlxTimer().start(2, function(_)
+				if (so)
 				{
+					var songLowercase:String = 'testnotwo';
+					var poop:String = Highscore.formatSong(songLowercase, 0);
+
+					PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+					PlayState.isStoryMode = false;
+					PlayState.storyDifficulty = 0;
+					PlayState.storyWeek = 0;
+					FlxTransitionableState.skipNextTransOut = true;
+					FlxG.camera.fade(FlxColor.WHITE, 0.31);
 					FlxG.sound.play(Paths.sound('confirmMenu'));
-					LoadingState.loadAndSwitchState(new PlayState());
-				});
+					new FlxTimer().start(2, function(_)
+					{
+						LoadingState.loadAndSwitchState(new PlayState());
+					});
+				}
 			}
 			else
 			{

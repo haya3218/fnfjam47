@@ -1,5 +1,6 @@
 package;
 
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -138,6 +139,8 @@ class ChartingState extends MusicBeatState
 	var amountSteps:Int = 0;
 	var bullshitUI:FlxGroup;
 
+	var receptors:FlxTypedSpriteGroup<StrumNote>;
+
 	var highlight:FlxSprite;
 
 	public static var GRID_SIZE:Int = 40;
@@ -214,6 +217,16 @@ class ChartingState extends MusicBeatState
 		leftIcon.setPosition(GRID_SIZE + 10, -100);
 		rightIcon.setPosition(GRID_SIZE * 5.2, -100);
 
+		var p2Text:FlxText = new FlxText(leftIcon.x, leftIcon.y, 0, "P2", 24);
+		p2Text.setFormat("VCR OSD Mono", 24, FlxColor.WHITE);
+		p2Text.setBorderStyle(OUTLINE_FAST, 0, 2.5);
+		add(p2Text);
+
+		var p1Text:FlxText = new FlxText(rightIcon.x + 5, rightIcon.y + 5, 0, "P1", 24);
+		p1Text.setFormat("VCR OSD Mono", 24, FlxColor.WHITE);
+		p1Text.setBorderStyle(OUTLINE_FAST, 0, 2.5);
+		add(p1Text);
+
 		curRenderedSustains = new FlxTypedGroup<FlxSprite>();
 		curRenderedNotes = new FlxTypedGroup<Note>();
 		curRenderedNoteType = new FlxTypedGroup<FlxText>();
@@ -265,6 +278,47 @@ class ChartingState extends MusicBeatState
 
 		strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(GRID_SIZE * 9), 4);
 		add(strumLine);
+
+		// receptors = new FlxTypedSpriteGroup<StrumNote>();
+
+		// for (i in 0...8)
+		// {
+		// 	var receptor = new StrumNote(gridBG.x, strumLine.y, i);
+		// 	receptor.frames = Paths.getPackerAtlas('NOTE_assets');
+		// 	receptor.antialiasing = ClientPrefs.globalAntialiasing;
+		// 	receptor.setGraphicSize(GRID_SIZE);
+
+		// 	if (i > 0)
+		// 		receptor.x += 40 * i;
+
+		// 	switch (Math.abs(i % 4))
+		// 	{
+		// 		case 0:
+		// 			receptor.animation.addByPrefix('static', 'arrowLEFT');
+		// 			receptor.animation.addByPrefix('pressed', 'left press', 24, false);
+		// 			receptor.animation.addByPrefix('confirm', 'left confirm', 24, false);
+		// 		case 1:
+		// 			receptor.animation.addByPrefix('static', 'arrowDOWN');
+		// 			receptor.animation.addByPrefix('pressed', 'down press', 24, false);
+		// 			receptor.animation.addByPrefix('confirm', 'down confirm', 24, false);
+		// 		case 2:
+		// 			receptor.animation.addByPrefix('static', 'arrowUP');
+		// 			receptor.animation.addByPrefix('pressed', 'up press', 24, false);
+		// 			receptor.animation.addByPrefix('confirm', 'up confirm', 24, false);
+		// 		case 3:
+		// 			receptor.animation.addByPrefix('static', 'arrowRIGHT');
+		// 			receptor.animation.addByPrefix('pressed', 'right press', 24, false);
+		// 			receptor.animation.addByPrefix('confirm', 'right confirm', 24, false);
+		// 	}
+
+		// 	receptor.ID = i;
+		// 	receptor.playAnim('static');
+		// 	receptor.x -= GRID_SIZE / 2;
+		// 	receptor.x += 2;
+		// 	receptors.add(receptor);
+		// }
+
+		// add(receptors);
 
 		camPos = new FlxObject(0, 0, 1, 1);
 		camPos.setPosition(strumLine.x + CAM_OFFSET, strumLine.y);
@@ -1017,6 +1071,10 @@ class ChartingState extends MusicBeatState
 		_song.song = UI_songTitle.text;
 
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime()) / curZoom % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps));
+		// receptors.forEach(function(receptor:StrumNote)
+		// {
+		// 	receptor.y = strumLine.y - 75;
+		// });
 		camPos.y = strumLine.y;
 
 		if (curBeat % 4 == 0 && curStep >= 16 * (curSection + 1))
@@ -1079,10 +1137,7 @@ class ChartingState extends MusicBeatState
 			&& FlxG.mouse.y < gridBG.y + (GRID_SIZE * _song.notes[curSection].lengthInSteps) * curZoom)
 		{
 			dummyArrow.x = Math.floor(FlxG.mouse.x / GRID_SIZE) * GRID_SIZE;
-			if (FlxG.keys.pressed.SHIFT)
-				dummyArrow.y = FlxG.mouse.y;
-			else
-				dummyArrow.y = Math.floor(FlxG.mouse.y / GRID_SIZE) * GRID_SIZE;
+			dummyArrow.y = calculateSnap();
 		}
 
 		var blockInput:Bool = false;
@@ -1281,6 +1336,10 @@ class ChartingState extends MusicBeatState
 		}
 		Conductor.songPosition = FlxG.sound.music.time;
 		strumLine.y = getYfromStrum((Conductor.songPosition - sectionStartTime()) / curZoom % (Conductor.stepCrochet * _song.notes[curSection].lengthInSteps));
+		// receptors.forEach(function(receptor:StrumNote)
+		// {
+		// 	receptor.y = strumLine.y - 75;
+		// });
 		camPos.y = strumLine.y;
 
 		bpmTxt.text = Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2))
@@ -1335,6 +1394,36 @@ class ChartingState extends MusicBeatState
 						playedSound[data] = true;
 					}
 				}
+				/*
+					if (note.strumTime + 200 > lastConductorPos && note.noteData > -1)
+					{
+						receptors.forEach(function(receptor:StrumNote)
+						{
+							if (_song.notes[curSection].mustHitSection && note.mustPress)
+							{
+								if (Math.abs(note.noteData) == receptor.ID)
+								{
+									receptor.playAnim('pressed');
+								}
+							}
+							else
+							{
+								if (Math.abs(note.noteData + 4) == receptor.ID)
+								{
+									receptor.playAnim('pressed');
+								}
+							}
+						});
+					}
+					else
+					{
+						receptors.forEach(function(receptor:StrumNote)
+						{
+							receptor.playAnim('static');
+							receptor.centerOffsets();
+						});
+					}
+				 */
 			}
 		});
 
@@ -1379,6 +1468,7 @@ class ChartingState extends MusicBeatState
 
 		gridBlackLine = new FlxSprite(gridBG.x + GRID_SIZE).makeGraphic(2, Std.int(gridBG.height), FlxColor.BLACK);
 		gridLayer.add(gridBlackLine);
+
 		updateGrid();
 	}
 
@@ -1499,16 +1589,8 @@ class ChartingState extends MusicBeatState
 		var healthIconP1:String = loadHealthIconFromCharacter(_song.player1);
 		var healthIconP2:String = loadHealthIconFromCharacter(_song.player2);
 
-		if (_song.notes[curSection].mustHitSection)
-		{
-			leftIcon.changeIcon(healthIconP1);
-			rightIcon.changeIcon(healthIconP2);
-		}
-		else
-		{
-			leftIcon.changeIcon(healthIconP2);
-			rightIcon.changeIcon(healthIconP1);
-		}
+		leftIcon.changeIcon(healthIconP2);
+		rightIcon.changeIcon(healthIconP1);
 	}
 
 	function loadHealthIconFromCharacter(char:String)
@@ -1605,10 +1687,19 @@ class ChartingState extends MusicBeatState
 			}
 		 */
 
+		var noteAdjust:Array<Int> = [0, 1, 2, 3, 4, 5, 6, 7];
+
 		// CURRENT SECTION
 		for (i in _song.notes[curSection].sectionNotes)
 		{
-			var note:Note = setupNoteData(i, false);
+			if (_song.notes[curSection] != null)
+			{
+				if (_song.notes[curSection].mustHitSection)
+				{
+					noteAdjust = [4, 5, 6, 7, 0, 1, 2, 3];
+				}
+			}
+			var note:Note = setupNoteData(i, false, noteAdjust);
 			curRenderedNotes.add(note);
 			if (note.sustainLength > 0)
 			{
@@ -1644,12 +1735,22 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
+		// RESET NOTE ADJUSTS
+		noteAdjust = [0, 1, 2, 3, 4, 5, 6, 7];
+
 		// NEXT SECTION
 		if (curSection < _song.notes.length - 1)
 		{
+			if (_song.notes[curSection + 1] != null)
+			{
+				if (_song.notes[curSection + 1].mustHitSection)
+				{
+					noteAdjust = [4, 5, 6, 7, 0, 1, 2, 3];
+				}
+			}
 			for (i in _song.notes[curSection + 1].sectionNotes)
 			{
-				var note:Note = setupNoteData(i, true);
+				var note:Note = setupNoteData(i, true, noteAdjust);
 				note.alpha = 0.6;
 				nextRenderedNotes.add(note);
 				if (note.sustainLength > 0)
@@ -1660,14 +1761,14 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
-	function setupNoteData(i:Array<Dynamic>, isNextSection:Bool):Note
+	function setupNoteData(i:Array<Dynamic>, isNextSection:Bool, adjust:Array<Int>):Note
 	{
 		var daNoteInfo = i[1];
 		var daStrumTime = i[0];
 		var daSus:Dynamic = i[2];
 		var daType:Dynamic = i[3];
 
-		var note:Note = new Note(daStrumTime, daNoteInfo % 4, null, null, true);
+		var note:Note = new Note(daStrumTime, daNoteInfo % 4, null, null, true, ClientPrefs.noteQuants);
 		if (daNoteInfo > -1)
 		{ // Common note
 			note.sustainLength = daSus;
@@ -1682,17 +1783,11 @@ class ChartingState extends MusicBeatState
 		}
 		note.setGraphicSize(GRID_SIZE, GRID_SIZE);
 		note.updateHitbox();
-		note.x = Math.floor(daNoteInfo * GRID_SIZE) + GRID_SIZE;
-		if (isNextSection && _song.notes[curSection].mustHitSection != _song.notes[curSection + 1].mustHitSection)
+		note.x = Math.floor(adjust[daNoteInfo] * GRID_SIZE) + GRID_SIZE;
+		if (daNoteInfo == -1)
 		{
-			if (daNoteInfo > 3)
-			{
-				note.x -= GRID_SIZE * 4;
-			}
-			else if (daNoteInfo > -1)
-			{
-				note.x += GRID_SIZE * 4;
-			}
+			note.x -= (daNoteInfo * GRID_SIZE) + GRID_SIZE;
+			note.x -= GRID_SIZE;
 		}
 
 		note.y = (GRID_SIZE * (isNextSection ? 16 : 0)) * curZoom
@@ -1784,13 +1879,20 @@ class ChartingState extends MusicBeatState
 
 	private function addNote():Void
 	{
+		var noteAdjust:Array<Int> = [0, 1, 2, 3, 4, 5, 6, 7];
+
+		if (_song.notes[curSection].mustHitSection)
+		{
+			noteAdjust = [4, 5, 6, 7, 0, 1, 2, 3];
+		}
 		var noteStrum = getStrumTime(dummyArrow.y, false) + sectionStartTime();
-		var noteData = Math.floor((FlxG.mouse.x - GRID_SIZE) / GRID_SIZE);
+		var noteData = noteAdjust[Math.floor((FlxG.mouse.x - GRID_SIZE) / GRID_SIZE)];
+		var rawNoteData = Math.floor((FlxG.mouse.x - GRID_SIZE) / GRID_SIZE);
 		var noteSus = 0;
 		var daAlt = false;
 		var daType = currentType;
 
-		if (noteData > -1)
+		if (rawNoteData > -1)
 		{
 			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, daType]);
 		}
@@ -1799,7 +1901,7 @@ class ChartingState extends MusicBeatState
 			var event = eventStuff[Std.parseInt(eventDropDown.selectedId)][0];
 			var text1 = value1InputText.text;
 			var text2 = value2InputText.text;
-			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, event, text1, text2]);
+			_song.notes[curSection].sectionNotes.push([noteStrum, rawNoteData, event, text1, text2]);
 		}
 		curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
 
@@ -1998,6 +2100,23 @@ class ChartingState extends MusicBeatState
 		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 		_file = null;
 		FlxG.log.error("Problem saving Level data");
+	}
+
+	function calculateSnap():Float
+	{
+		var returnThe:Float = 0.00;
+		if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.SHIFT)
+			returnThe = Math.floor(FlxG.mouse.y / (GRID_SIZE / 4)) * (GRID_SIZE / 4);
+		else if (FlxG.keys.pressed.SHIFT)
+			returnThe = FlxG.mouse.y;
+		else if (FlxG.keys.pressed.ALT)
+			returnThe = Math.floor(FlxG.mouse.y / (GRID_SIZE * 4 / 3)) * (GRID_SIZE * 4 / 3);
+		else if (FlxG.keys.pressed.CONTROL)
+			returnThe = Math.floor(FlxG.mouse.y / (GRID_SIZE / 2)) * (GRID_SIZE / 2);
+		else
+			returnThe = Math.floor(FlxG.mouse.y / GRID_SIZE) * GRID_SIZE;
+
+		return returnThe;
 	}
 }
 

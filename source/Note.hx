@@ -39,6 +39,8 @@ class Note extends FlxSprite
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
 
+	public var noteQuant:Int = -1;
+
 	private function set_noteType(value:Int):Int
 	{
 		if (noteData > -1 && noteType != value)
@@ -63,7 +65,7 @@ class Note extends FlxSprite
 
 	var isPixel:Bool = false;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, isQuant:Bool = false)
 	{
 		super();
 
@@ -83,6 +85,65 @@ class Note extends FlxSprite
 
 		this.noteData = noteData;
 
+		if (!isQuant)
+		{
+			loadNormalAnims();
+		}
+		else
+		{
+			loadQuantAnims();
+		}
+	}
+
+	function reloadNote(?prefix:String = '', ?suffix:String = '')
+	{
+		var skin:String = PlayState.SONG.arrowSkin;
+		if (skin == null || skin.length < 1)
+		{
+			skin = 'NOTE_assets';
+		}
+
+		var animName:String = null;
+		if (animation.curAnim != null)
+		{
+			animName = animation.curAnim.name;
+		}
+
+		var blahblah:String = prefix + skin + suffix;
+		if (isPixel)
+		{
+			if (isSustainNote)
+			{
+				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah + 'ENDS'));
+				width = width / 4;
+				height = height / 2;
+				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
+			}
+			else
+			{
+				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah));
+				width = width / 4;
+				height = height / 5;
+				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah), true, Math.floor(width), Math.floor(height));
+			}
+			loadPixelNoteAnims();
+		}
+		else
+		{
+			frames = Paths.getSparrowAtlas(blahblah);
+			loadNoteAnims();
+		}
+		animation.play(animName, true);
+
+		if (inEditor)
+		{
+			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
+			updateHitbox();
+		}
+	}
+
+	function loadNormalAnims()
+	{
 		var daStage:String = PlayState.curStage;
 
 		switch (daStage)
@@ -195,50 +256,88 @@ class Note extends FlxSprite
 			reloadNote();
 	}
 
-	function reloadNote(?prefix:String = '', ?suffix:String = '')
+	// taken from forever engine with a few minor tweaks to make it fucking work
+	// thanks gedehari and yoshubs
+	// https://github.com/Yoshubs/Forever-Engine/blob/master/source/gameFolder/gameObjects/Note.hx
+	function loadQuantAnims()
 	{
-		var skin:String = PlayState.SONG.arrowSkin;
-		if (skin == null || skin.length < 1)
+		// actually determine the quant of the note
+		if (noteQuant == -1)
 		{
-			skin = 'NOTE_assets';
+			/*
+				I have to credit like 3 different people for these LOL they were a hassle
+				but its gede pixl and scarlett, thank you SO MUCH for baring with me
+			 */
+			final quantArray:Array<Int> = [4, 8, 12, 16, 20, 24, 32, 48, 64, 192]; // different quants
+
+			final beatTimeSeconds:Float = (60 / Conductor.bpm); // beat in seconds
+			final beatTime:Float = beatTimeSeconds * 1000; // beat in milliseconds
+			// assumed 4 beats per measure?
+			final measureTime:Float = beatTime * 4;
+
+			final smallestDeviation:Float = measureTime / quantArray[quantArray.length - 1];
+
+			for (quant in 0...quantArray.length)
+			{
+				// please generate this ahead of time and put into array :)
+				// I dont think I will im scared of those
+				final quantTime = (measureTime / quantArray[quant]);
+				if ((strumTime + smallestDeviation) % quantTime < smallestDeviation * 2)
+				{
+					// here it is, the quant, finally!
+					noteQuant = quant;
+					break;
+				}
+			}
 		}
 
-		var animName:String = null;
-		if (animation.curAnim != null)
+		// note quants
+		// inherit last quant if hold note
+		if (isSustainNote && prevNote != null)
+			noteQuant = prevNote.noteQuant;
+		// base quant notes
+		if (!isSustainNote)
 		{
-			animName = animation.curAnim.name;
-		}
+			loadGraphic(Paths.image('quants/NOTE_quants'), true, 157, 157);
 
-		var blahblah:String = prefix + skin + suffix;
-		if (isPixel)
-		{
-			if (isSustainNote)
-			{
-				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah + 'ENDS'));
-				width = width / 4;
-				height = height / 2;
-				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
-			}
-			else
-			{
-				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah));
-				width = width / 4;
-				height = height / 5;
-				loadGraphic(Paths.image('weeb/pixelUI/' + blahblah), true, Math.floor(width), Math.floor(height));
-			}
-			loadPixelNoteAnims();
+			animation.add('leftScroll', [0 + (noteQuant * 4)]);
+			// LOL downscroll thats so funny to me
+			animation.add('downScroll', [1 + (noteQuant * 4)]);
+			animation.add('upScroll', [2 + (noteQuant * 4)]);
+			animation.add('rightScroll', [3 + (noteQuant * 4)]);
 		}
 		else
 		{
-			frames = Paths.getSparrowAtlas(blahblah);
-			loadNoteAnims();
+			// quant holds
+			loadGraphic(Paths.image('quants/HOLD_quants'), true, 109, 52);
+			animation.add('hold', [0 + (noteQuant * 4)]);
+			animation.add('holdend', [1 + (noteQuant * 4)]);
+			animation.add('rollhold', [2 + (noteQuant * 4)]);
+			animation.add('rollend', [3 + (noteQuant * 4)]);
 		}
-		animation.play(animName, true);
+		setGraphicSize(Std.int(width * 0.7));
+		updateHitbox();
+		antialiasing = ClientPrefs.globalAntialiasing;
 
-		if (inEditor)
+		//
+		if (!isSustainNote)
+			animation.play(getArrowFromNumber(noteData) + 'Scroll');
+
+		// trace(prevNote);
+
+		if (isSustainNote && prevNote != null)
 		{
-			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
+			animation.play('holdend');
 			updateHitbox();
+
+			if (prevNote.isSustainNote)
+			{
+				prevNote.animation.play('hold');
+
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+				prevNote.updateHitbox();
+				// prevNote.setGraphicSize();
+			}
 		}
 	}
 
@@ -317,5 +416,25 @@ class Note extends FlxSprite
 		{
 			FlxMath.lerp(alpha, 0, 0.17 * (FlxG.updateFramerate / 60));
 		}
+	}
+
+	public static function getArrowFromNumber(numb:Int)
+	{
+		// yeah no I'm not writing the same shit 4 times over
+		// take it or leave it my guy
+		var stringSect:String = '';
+		switch (numb)
+		{
+			case(0):
+				stringSect = 'left';
+			case(1):
+				stringSect = 'down';
+			case(2):
+				stringSect = 'up';
+			case(3):
+				stringSect = 'right';
+		}
+		return stringSect;
+		//
 	}
 }

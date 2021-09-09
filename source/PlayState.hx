@@ -1621,7 +1621,7 @@ class PlayState extends MusicBeatState
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
 		var songName:String = SONG.song.toLowerCase();
-		if (ClientPrefs.flashing) // disable the wAcKy eFfEcTs for people that have skill issues or have epilepsy
+		if (!ClientPrefs.flashing) // disable the wAcKy eFfEcTs for people that have skill issues or have epilepsy
 		{
 			var file:String = Paths.json(songName + '/events');
 			#if sys
@@ -1667,7 +1667,7 @@ class PlayState extends MusicBeatState
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 					else
 						oldNote = null;
-					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, ClientPrefs.noteQuants);
 
 					swagNote.sustainLength = songNotes[2];
 					swagNote.noteType = songNotes[3];
@@ -1686,7 +1686,7 @@ class PlayState extends MusicBeatState
 							var sustainNote:Note = new Note(daStrumTime
 								+ (Conductor.stepCrochet * susNote)
 								+ (Conductor.stepCrochet / FlxMath.roundDecimal(SONG.speed, 2)), daNoteData,
-								oldNote, true);
+								oldNote, true, false, ClientPrefs.noteQuants);
 							sustainNote.noteType = swagNote.noteType;
 							sustainNote.scrollFactor.set();
 							unspawnNotes.push(sustainNote);
@@ -2525,11 +2525,25 @@ class PlayState extends MusicBeatState
 					daNote.x = strumX;
 				else
 				{
-					// ez fix for incredibly ocd triggering sustains
-					if (daNote.noteData != 1)
-						daNote.x = strumX + 38;
+					if (!ClientPrefs.noteQuants)
+					{
+						// ez fix for incredibly ocd triggering sustains
+						if (daNote.noteData != 1)
+							daNote.x = strumX + 38;
+						else
+							daNote.x = strumX + 36;
+					}
 					else
-						daNote.x = strumX + 36;
+					{
+						daNote.x = strumX + 20;
+						if (daNote.animation.curAnim.name.endsWith('end'))
+						{
+							if (ClientPrefs.downScroll)
+								daNote.y -= 36.4 * roundedSpeed;
+							else
+								daNote.y += 36.4 * roundedSpeed;
+						}
+					}
 				}
 
 				// daNote.x = FlxMath.lerp(daNote.x, notePos, 0.07 * (FlxG.drawFramerate / 60));
@@ -3205,16 +3219,16 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Flip Notes':
-				swapNotesOnStrum(0, 3, playerStrums, arrowPositions, 0.19, 0, 0);
-				swapNotesOnStrum(1, 2, playerStrums, arrowPositions, 0.19, 0, 0);
-				swapNotesOnStrum(0, 3, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
-				swapNotesOnStrum(1, 2, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(0, 3, playerStrums, arrowPositions, 0.3, 0, 0);
+				swapNotesOnStrum(1, 2, playerStrums, arrowPositions, 0.3, 0, 0);
+				swapNotesOnStrum(0, 3, opponentStrums, enemyArrowPositions, 0.3, 0, 0);
+				swapNotesOnStrum(1, 2, opponentStrums, enemyArrowPositions, 0.3, 0, 0);
 
 			case 'Invert Notes':
-				swapNotesOnStrum(0, 1, playerStrums, arrowPositions, 0.19, 0, 0);
-				swapNotesOnStrum(2, 3, playerStrums, arrowPositions, 0.19, 0, 0);
-				swapNotesOnStrum(0, 1, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
-				swapNotesOnStrum(2, 3, opponentStrums, enemyArrowPositions, 0.19, 0, 0);
+				swapNotesOnStrum(0, 1, playerStrums, arrowPositions, 0.3, 0, 0);
+				swapNotesOnStrum(2, 3, playerStrums, arrowPositions, 0.3, 0, 0);
+				swapNotesOnStrum(0, 1, opponentStrums, enemyArrowPositions, 0.3, 0, 0);
+				swapNotesOnStrum(2, 3, opponentStrums, enemyArrowPositions, 0.3, 0, 0);
 
 			case 'Swap Notes':
 				var val1:Int = Std.parseInt(value1);

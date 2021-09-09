@@ -808,6 +808,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Note Splashes',
 		'Hide HUD',
 		'Flashing Lights',
+		'Note Quants',
 		'Camera Zooms'
 		#if !mobile, 'FPS Counter'
 		#end
@@ -1015,6 +1016,9 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Fullscreen':
 						ClientPrefs.fullScreen = !ClientPrefs.fullScreen;
 						CoolUtil.fullScreen(ClientPrefs.fullScreen);
+
+					case 'Note Quants':
+						ClientPrefs.noteQuants = !ClientPrefs.noteQuants;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1126,6 +1130,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "If checked, hides most HUD elements.";
 			case 'Fullscreen':
 				daText = "Self explanatory. (Borderless, easier to record to)";
+			case 'Note Quants':
+				daText = "Note colors are by timing instead of by direction.";
 		}
 		descText.text = daText;
 
@@ -1221,6 +1227,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.hideHud;
 					case 'Persistent Cached Data':
 						daValue = ClientPrefs.imagesPersist;
+					case 'Fullscreen':
+						daValue = ClientPrefs.fullScreen;
+					case 'Note Quants':
+						daValue = ClientPrefs.noteQuants;
 				}
 				checkbox.daValue = daValue;
 			}

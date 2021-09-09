@@ -25,6 +25,7 @@ class ClientPrefs
 	public static var imagesPersist:Bool = false;
 	public static var ghostTapping:Bool = true;
 	public static var fullScreen:Bool = false;
+	public static var noteQuants:Bool = false;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A,
@@ -88,6 +89,7 @@ class ClientPrefs
 		FlxG.save.data.imagesPersist = imagesPersist;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.fullScreen = fullScreen;
+		FlxG.save.data.noteQuants = noteQuants;
 
 		var achieves:Array<String> = [];
 		for (i in 0...Achievements.achievementsUnlocked.length)
@@ -186,6 +188,10 @@ class ClientPrefs
 		if (FlxG.save.data.fullScreen != null)
 		{
 			fullScreen = FlxG.save.data.fullScreen;
+		}
+		if (FlxG.save.data.noteQuants != null)
+		{
+			noteQuants = FlxG.save.data.noteQuants;
 		}
 
 		var save:FlxSave = new FlxSave();
