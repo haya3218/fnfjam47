@@ -178,6 +178,10 @@ class ChartingState extends MusicBeatState
 	var currentSongName:String;
 	var zoomMult:Int = 1; // 0 = 0.5 actually lmao
 	var zoomTxt:FlxText;
+	var snapTxt:FlxText;
+
+	var snapNum:Int = 0;
+	var quantArray:Array<Int> = [4, 8, 12, 16, 20, 24, 32, 48, 64, 192];
 
 	private var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	private var blockPressWhileScrolling:Array<FlxUIDropDownMenuCustom> = [];
@@ -233,6 +237,8 @@ class ChartingState extends MusicBeatState
 
 		nextRenderedSustains = new FlxTypedGroup<FlxSprite>();
 		nextRenderedNotes = new FlxTypedGroup<Note>();
+
+		snapNum = 0;
 
 		if (PlayState.SONG != null)
 			_song = PlayState.SONG;
@@ -379,6 +385,10 @@ class ChartingState extends MusicBeatState
 		zoomTxt = new FlxText(10, 10, 0, "Zoom: 1x", 16);
 		zoomTxt.scrollFactor.set();
 		add(zoomTxt);
+
+		snapTxt = new FlxText(10, 26, 0, "Snap: 4", 16);
+		snapTxt.scrollFactor.set();
+		add(snapTxt);
 		super.create();
 	}
 
@@ -1309,6 +1319,26 @@ class ChartingState extends MusicBeatState
 					changeSection(curSection - shiftThing);
 				}
 			}
+
+			if (FlxG.keys.justPressed.I)
+			{
+				snapNum -= 1;
+
+				if (snapNum < 0)
+					snapNum = quantArray.length - 1;
+				if (snapNum >= quantArray.length)
+					snapNum = 0;
+			}
+
+			if (FlxG.keys.justPressed.P)
+			{
+				snapNum += 1;
+
+				if (snapNum < 0)
+					snapNum = quantArray.length - 1;
+				if (snapNum >= quantArray.length)
+					snapNum = 0;
+			}
 		}
 		else if (FlxG.keys.justPressed.ENTER)
 		{
@@ -1322,6 +1352,8 @@ class ChartingState extends MusicBeatState
 		}
 
 		_song.bpm = tempBpm;
+
+		snapTxt.text = "Snap: " + quantArray[snapNum];
 
 		if (FlxG.sound.music.time < 0)
 		{
@@ -2105,16 +2137,9 @@ class ChartingState extends MusicBeatState
 	function calculateSnap():Float
 	{
 		var returnThe:Float = 0.00;
-		if (FlxG.keys.pressed.CONTROL && FlxG.keys.pressed.SHIFT)
-			returnThe = Math.floor(FlxG.mouse.y / (GRID_SIZE / 4)) * (GRID_SIZE / 4);
-		else if (FlxG.keys.pressed.SHIFT)
-			returnThe = FlxG.mouse.y;
-		else if (FlxG.keys.pressed.ALT)
-			returnThe = Math.floor(FlxG.mouse.y / (GRID_SIZE * 4 / 3)) * (GRID_SIZE * 4 / 3);
-		else if (FlxG.keys.pressed.CONTROL)
-			returnThe = Math.floor(FlxG.mouse.y / (GRID_SIZE / 2)) * (GRID_SIZE / 2);
-		else
-			returnThe = Math.floor(FlxG.mouse.y / GRID_SIZE) * GRID_SIZE;
+
+		var snapCalc = CoolUtil.boundTo(GRID_SIZE / (quantArray[snapNum] - 3), 1, Math.POSITIVE_INFINITY);
+		returnThe = Math.floor(FlxG.mouse.y / snapCalc) * snapCalc;
 
 		return returnThe;
 	}
