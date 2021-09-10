@@ -2397,7 +2397,7 @@ class PlayState extends MusicBeatState
 				if (curSong != 'Spades')
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y, camFollowPos.x, camFollowPos.y));
 				else
-					throw new Exception("Fatal Error: Friday Night Funkin' VS ACE has shut down, error message: YOU FUYCKING SUCK LMAOO!O!OO!O!");
+					CoolUtil.coolException('CRASH_BY_DEATH', 'You fucking died lmao');
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
@@ -2533,13 +2533,6 @@ class PlayState extends MusicBeatState
 					else
 					{
 						daNote.x = strumX + (20 - (daNote.noteData + 1));
-						if (daNote.animation.curAnim.name.endsWith('end'))
-						{
-							if (ClientPrefs.downScroll)
-								daNote.y -= 36.4 * roundedSpeed;
-							else
-								daNote.y += 36.4 * roundedSpeed;
-						}
 					}
 				}
 
@@ -2562,7 +2555,10 @@ class PlayState extends MusicBeatState
 				{
 					if (daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end'))
 					{
-						daNote.scale.y = Conductor.stepCrochet / 100 * 1.5 * actualSpeed;
+						if (!ClientPrefs.noteQuants)
+							daNote.scale.y = Conductor.stepCrochet / 100 * 1.5 * actualSpeed;
+						else
+							daNote.scale.y = Conductor.stepCrochet / 100 * (43 / 52) * 1.5 * actualSpeed;
 						daNote.updateHitbox();
 					}
 				}

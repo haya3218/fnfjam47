@@ -1,5 +1,6 @@
 package;
 
+import haxe.Exception;
 import openfl.system.Capabilities;
 import lime.app.Application;
 import flixel.FlxG;
@@ -115,5 +116,11 @@ class CoolUtil
 			Application.current.window.y = Main.initalWindowY;
 		}
 		Application.current.window.borderless = bool;
+	}
+
+	public static function coolException(?title:String = 'COOL_EXCEPTION', ?description:String = 'Fool')
+	{
+		// throw new Exception(description, new Exception(title));
+		throw new Exception('$title: $description');
 	}
 }
