@@ -1654,6 +1654,7 @@ class PlayState extends MusicBeatState
 				{ // Real notes
 					var daStrumTime:Float = songNotes[0];
 					var daNoteData:Int = Std.int(songNotes[1] % 4);
+					var rollNote:Bool = songNotes[6];
 
 					var gottaHitNote:Bool = section.mustHitSection;
 
@@ -1686,7 +1687,7 @@ class PlayState extends MusicBeatState
 							var sustainNote:Note = new Note(daStrumTime
 								+ (Conductor.stepCrochet * susNote)
 								+ (Conductor.stepCrochet / FlxMath.roundDecimal(SONG.speed, 2)), daNoteData,
-								oldNote, true, false, ClientPrefs.noteQuants);
+								oldNote, true, false, ClientPrefs.noteQuants, rollNote);
 							sustainNote.noteType = swagNote.noteType;
 							sustainNote.scrollFactor.set();
 							unspawnNotes.push(sustainNote);
@@ -2525,16 +2526,22 @@ class PlayState extends MusicBeatState
 					daNote.x = strumX;
 				else
 				{
-					if (!ClientPrefs.noteQuants)
+					if (!daNote.isRollNote)
 					{
-						// ez fix for incredibly ocd triggering sustains
-						daNote.x = strumX + (40 - (daNote.noteData + 1));
-					}
-					else
-					{
-						daNote.x = strumX + (20 - (daNote.noteData + 1));
+						if (!ClientPrefs.noteQuants)
+						{
+							// ez fix for incredibly ocd triggering sustains
+							daNote.x = strumX + (40 - (daNote.noteData + 1));
+						}
+						else
+						{
+							daNote.x = strumX + (20 - (daNote.noteData + 1));
+						}
 					}
 				}
+
+				if (daNote.isRollNote)
+					daNote.x = strumX;
 
 				// daNote.x = FlxMath.lerp(daNote.x, notePos, 0.07 * (FlxG.drawFramerate / 60));
 				var strumScaleX:Float = 0;
@@ -2548,16 +2555,13 @@ class PlayState extends MusicBeatState
 				else
 					strumScaleY = opponentStrums.members[daNote.noteData].scale.y;
 
-				if (strumScaleX > 0.9 || strumScaleY > 0.9)
-					daNote.scale.set(strumScaleX, strumScaleY);
-
 				if (speedLerp != actualSpeed)
 				{
 					if (daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end'))
 					{
 						if (!ClientPrefs.noteQuants)
 							daNote.scale.y = Conductor.stepCrochet / 100 * 1.5 * actualSpeed;
-						else
+						else if (ClientPrefs.noteQuants || daNote.isRollNote)
 							daNote.scale.y = Conductor.stepCrochet / 100 * (43 / 52) * 1.5 * actualSpeed;
 						daNote.updateHitbox();
 					}
@@ -2723,7 +2727,7 @@ class PlayState extends MusicBeatState
 
 				if (doKill)
 				{
-					if (daNote.mustPress && !cpuControlled)
+					if (daNote.mustPress && !cpuControlled && !daNote.isRollNote)
 					{
 						if (daNote.tooLate || !daNote.wasGoodHit)
 						{
@@ -3908,6 +3912,10 @@ class PlayState extends MusicBeatState
 		rating.updateHitbox();
 
 		var seperatedScore:Array<Int> = [];
+		if (combo == 0)
+		{
+			combo++;
+		}
 
 		seperatedScore.push(Math.floor(combo / 100));
 		seperatedScore.push(Math.floor((combo - (seperatedScore[0] * 100)) / 10));
@@ -4005,7 +4013,7 @@ class PlayState extends MusicBeatState
 			{
 				notes.forEachAlive(function(daNote:Note)
 				{
-					if (daNote.isSustainNote && controlHoldArray[daNote.noteData] && daNote.canBeHit && daNote.mustPress)
+					if (daNote.isSustainNote && controlHoldArray[daNote.noteData] && daNote.canBeHit && daNote.mustPress && !daNote.isRollNote)
 					{
 						goodNoteHit(daNote);
 					}
@@ -4038,7 +4046,7 @@ class PlayState extends MusicBeatState
 				var dupeNotes:Array<Note> = [];
 				notes.forEachAlive(function(daNote:Note)
 				{
-					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit)
+					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && (daNote.isRollNote || !daNote.wasGoodHit))
 					{
 						if (notesDatas.indexOf(daNote.noteData) != -1)
 						{
@@ -4191,7 +4199,7 @@ class PlayState extends MusicBeatState
 
 	function goodNoteHit(note:Note):Void
 	{
-		if (!note.wasGoodHit)
+		if (!note.wasGoodHit || note.isRollNote)
 		{
 			switch (note.noteType)
 			{
@@ -4238,6 +4246,12 @@ class PlayState extends MusicBeatState
 			{
 				popUpScore(note);
 				combo += 1;
+			}
+
+			if (note.isRollNote)
+			{
+				combo += 1;
+				popUpScore(note);
 			}
 
 			if (note.noteData >= 0)
@@ -4302,7 +4316,7 @@ class PlayState extends MusicBeatState
 			var isSus:Bool = note.isSustainNote; // GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
 			var leData:Int = note.noteData;
 			var leType:Int = note.noteType;
-			if (!note.isSustainNote)
+			if (!note.isSustainNote || !note.isRollNote)
 			{
 				if (cpuControlled)
 				{
@@ -4318,6 +4332,12 @@ class PlayState extends MusicBeatState
 				if (boyfriend.holdTimer + 0.2 > targetHold)
 				{
 					boyfriend.holdTimer = targetHold - 0.2;
+				}
+				if (note.isRollNote)
+				{
+					var time:Float = 0.15;
+					time += 0.15;
+					StrumPlayAnim(false, Std.int(Math.abs(note.noteData)) % 4, time);
 				}
 			}
 			callOnLuas('goodNoteHit', [leData, leType, isSus]);

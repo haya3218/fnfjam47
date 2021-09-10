@@ -1515,6 +1515,13 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
+		if (FlxG.keys.pressed.R)
+		{
+			// sets it to a roll note instead of a sustain note
+			// why? because yes
+			curSelectedNote[6] = true;
+		}
+
 		updateNoteUI();
 		updateGrid();
 	}

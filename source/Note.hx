@@ -41,6 +41,8 @@ class Note extends FlxSprite
 
 	public var noteQuant:Int = -1;
 
+	public var isRollNote:Bool = false;
+
 	private function set_noteType(value:Int):Int
 	{
 		if (noteData > -1 && noteType != value)
@@ -65,7 +67,8 @@ class Note extends FlxSprite
 
 	var isPixel:Bool = false;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, isQuant:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, isQuant:Bool = false,
+			isRoll:Bool = false)
 	{
 		super();
 
@@ -75,6 +78,7 @@ class Note extends FlxSprite
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
 		this.inEditor = inEditor;
+		isRollNote = isRoll;
 
 		x += PlayState.STRUM_X + 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -205,7 +209,7 @@ class Note extends FlxSprite
 
 		// trace(prevNote);
 
-		if (isSustainNote && prevNote != null)
+		if (isSustainNote && prevNote != null && !isRollNote)
 		{
 			// alpha = 0.6;
 			if (ClientPrefs.downScroll)
@@ -247,6 +251,50 @@ class Note extends FlxSprite
 				}
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+				prevNote.updateHitbox();
+				// prevNote.setGraphicSize();
+			}
+		}
+
+		if (isRollNote && prevNote != null)
+		{
+			// alpha = 0.6;
+			if (ClientPrefs.downScroll)
+				flipY = true;
+
+			x += width / 2;
+
+			switch (noteData)
+			{
+				case 0:
+					animation.play('purplerollend');
+				case 1:
+					animation.play('bluerollend');
+				case 2:
+					animation.play('greenrollend');
+				case 3:
+					animation.play('redrollend');
+			}
+
+			updateHitbox();
+
+			x -= width / 2;
+
+			if (prevNote.isRollNote)
+			{
+				switch (prevNote.noteData)
+				{
+					case 0:
+						prevNote.animation.play('purpleroll');
+					case 1:
+						prevNote.animation.play('blueroll');
+					case 2:
+						prevNote.animation.play('greenroll');
+					case 3:
+						prevNote.animation.play('redroll');
+				}
+
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * (43 / 52) * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
@@ -325,7 +373,7 @@ class Note extends FlxSprite
 
 		// trace(prevNote);
 
-		if (isSustainNote && prevNote != null)
+		if (isSustainNote && prevNote != null && !isRollNote)
 		{
 			animation.play('holdend');
 			updateHitbox();
@@ -333,6 +381,22 @@ class Note extends FlxSprite
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play('hold');
+
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * (43 / 52) * 1.5 * PlayState.SONG.speed;
+				prevNote.updateHitbox();
+				// prevNote.setGraphicSize();
+			}
+		}
+
+		if (isRollNote && prevNote != null)
+		{
+			animation.play('rollend');
+			scale.x = 1;
+			updateHitbox();
+
+			if (prevNote.isRollNote)
+			{
+				prevNote.animation.play('rollhold');
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * (43 / 52) * 1.5 * PlayState.SONG.speed;
 				prevNote.updateHitbox();
@@ -361,6 +425,19 @@ class Note extends FlxSprite
 			animation.addByPrefix('bluehold', 'blue hold piece');
 		}
 
+		if (isRollNote)
+		{
+			loadGraphic(Paths.image('quants/HOLD_quants'), true, 109, 52);
+			animation.add('purpleroll', [10]);
+			animation.add('purplerollend', [11]);
+			animation.add('greenroll', [14]);
+			animation.add('greenrollend', [15]);
+			animation.add('redroll', [2]);
+			animation.add('redrollend', [3]);
+			animation.add('blueroll', [34]);
+			animation.add('bluerollend', [35]);
+		}
+
 		setGraphicSize(Std.int(width * 0.7));
 		updateHitbox();
 	}
@@ -379,6 +456,18 @@ class Note extends FlxSprite
 			animation.add('redhold', [RED_NOTE]);
 			animation.add('bluehold', [BLUE_NOTE]);
 		}
+		else if (isRollNote)
+		{
+			animation.add('purplerollend', [PURP_NOTE + 4]);
+			animation.add('greenrollend', [GREEN_NOTE + 4]);
+			animation.add('redrollend', [RED_NOTE + 4]);
+			animation.add('bluerollend', [BLUE_NOTE + 4]);
+
+			animation.add('purpleroll', [PURP_NOTE]);
+			animation.add('greenroll', [GREEN_NOTE]);
+			animation.add('redroll', [RED_NOTE]);
+			animation.add('blueroll', [BLUE_NOTE]);
+		}
 		else
 		{
 			animation.add('greenScroll', [GREEN_NOTE + 4]);
@@ -396,7 +485,7 @@ class Note extends FlxSprite
 		{
 			// The * 0.5 is so that it's easier to hit them too late, instead of too early
 			if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
-				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+				&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * (isRollNote ? 0.5 : 0.75)))
 				canBeHit = true;
 			else
 				canBeHit = false;
