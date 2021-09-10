@@ -2528,14 +2528,11 @@ class PlayState extends MusicBeatState
 					if (!ClientPrefs.noteQuants)
 					{
 						// ez fix for incredibly ocd triggering sustains
-						if (daNote.noteData != 1)
-							daNote.x = strumX + 38;
-						else
-							daNote.x = strumX + 36;
+						daNote.x = strumX + (40 - (daNote.noteData + 1));
 					}
 					else
 					{
-						daNote.x = strumX + 20;
+						daNote.x = strumX + (20 - (daNote.noteData + 1));
 						if (daNote.animation.curAnim.name.endsWith('end'))
 						{
 							if (ClientPrefs.downScroll)

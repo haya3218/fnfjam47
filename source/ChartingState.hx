@@ -2138,7 +2138,7 @@ class ChartingState extends MusicBeatState
 	{
 		var returnThe:Float = 0.00;
 
-		var snapCalc = CoolUtil.boundTo(GRID_SIZE / (quantArray[snapNum] - 3), 1, Math.POSITIVE_INFINITY);
+		var snapCalc = CoolUtil.boundTo(GRID_SIZE / (quantArray[snapNum] / 4), 1, Math.POSITIVE_INFINITY);
 		returnThe = Math.floor(FlxG.mouse.y / snapCalc) * snapCalc;
 
 		return returnThe;
