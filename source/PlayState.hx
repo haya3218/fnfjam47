@@ -4607,7 +4607,25 @@ class PlayState extends MusicBeatState
 			gf.dance();
 		}
 
-		if (curBeat % 2 == 0)
+		if (!dad.curCharacter.startsWith('gf'))
+		{
+			if (curBeat % 2 == 0)
+			{
+				if (!boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.specialAnim)
+				{
+					boyfriend.dance();
+				}
+				if (!dad.animation.curAnim.name.startsWith("sing") && !dad.stunned)
+				{
+					dad.dance();
+				}
+			}
+			else if (dad.danceIdle && !dad.curCharacter.startsWith('gf') && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned)
+			{
+				dad.dance();
+			}
+		}
+		else
 		{
 			if (!boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.specialAnim)
 			{
@@ -4617,10 +4635,6 @@ class PlayState extends MusicBeatState
 			{
 				dad.dance();
 			}
-		}
-		else if (dad.danceIdle && !dad.curCharacter.startsWith('gf') && !dad.animation.curAnim.name.startsWith("sing") && !dad.stunned)
-		{
-			dad.dance();
 		}
 
 		switch (curStage)

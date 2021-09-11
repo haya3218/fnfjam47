@@ -89,7 +89,7 @@ class SmthState extends MusicBeatState
 			{
 				if (so)
 				{
-					var songLowercase:String = 'testnotwo';
+					var songLowercase:String = 'secret';
 					var poop:String = Highscore.formatSong(songLowercase, 0);
 
 					PlayState.SONG = Song.loadFromJson(poop, songLowercase);

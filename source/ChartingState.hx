@@ -398,6 +398,7 @@ class ChartingState extends MusicBeatState
 	var UI_songTitle:FlxUIInputText;
 	var noteSkinInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
+	var sustainIsRoll:FlxUICheckBox = null;
 
 	function addSongUI():Void
 	{
@@ -613,7 +614,7 @@ class ChartingState extends MusicBeatState
 		check_changeBPM.checked = _song.notes[curSection].changeBPM;
 		check_changeBPM.name = 'check_changeBPM';
 
-		stepperSectionBPM = new FlxUINumericStepper(10, 110, 1, Conductor.bpm, 0, 999, 1);
+		stepperSectionBPM = new FlxUINumericStepper(10, 110, 1, Conductor.bpm, 0, 10000, 1);
 		if (check_changeBPM.checked)
 		{
 			stepperSectionBPM.value = _song.notes[curSection].bpm;
@@ -741,12 +742,16 @@ class ChartingState extends MusicBeatState
 		});
 		blockPressWhileScrolling.push(noteTypeDropDown);
 
+		sustainIsRoll = new FlxUICheckBox(10, 140, null, null, 'Make sustains rolls', 100);
+		sustainIsRoll.checked = false;
+
 		tab_group_note.add(new FlxText(10, 10, 0, 'Sustain length:'));
 		tab_group_note.add(new FlxText(10, 50, 0, 'Strum time (in miliseconds):'));
 		tab_group_note.add(new FlxText(10, 90, 0, 'Note type:'));
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(strumTimeInputText);
 		tab_group_note.add(noteTypeDropDown);
+		tab_group_note.add(sustainIsRoll);
 
 		UI_box.addGroup(tab_group_note);
 	}
@@ -1515,7 +1520,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		if (FlxG.keys.pressed.R)
+		if (sustainIsRoll.checked)
 		{
 			// sets it to a roll note instead of a sustain note
 			// why? because yes

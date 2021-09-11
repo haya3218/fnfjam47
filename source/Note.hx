@@ -51,14 +51,20 @@ class Note extends FlxSprite
 			{
 				case 3: // Hurt note
 					reloadNote('HURT');
-					colorSwap.hue = 0;
-					colorSwap.saturation = 0;
-					colorSwap.brightness = 0;
+					if (noteQuant > -1)
+					{
+						colorSwap.hue = 0;
+						colorSwap.saturation = 0;
+						colorSwap.brightness = 0;
+					}
 
 				default:
-					colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-					colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-					colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+					if (noteQuant > -1)
+					{
+						colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
+						colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
+						colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+					}
 			}
 			noteType = value;
 		}
@@ -343,6 +349,16 @@ class Note extends FlxSprite
 		// inherit last quant if hold note
 		if (isSustainNote && prevNote != null)
 			noteQuant = prevNote.noteQuant;
+
+		if (noteData > -1)
+		{
+			// literally never talk to me again openfl
+			colorSwap = new ColorSwap();
+			shader = colorSwap.shader;
+			colorSwap.hue = 0;
+			colorSwap.saturation = 0;
+			colorSwap.brightness = 0;
+		}
 		// base quant notes
 		if (!isSustainNote)
 		{
@@ -407,10 +423,40 @@ class Note extends FlxSprite
 
 	function loadNoteAnims()
 	{
-		animation.addByPrefix('greenScroll', 'green0');
-		animation.addByPrefix('redScroll', 'red0');
-		animation.addByPrefix('blueScroll', 'blue0');
-		animation.addByPrefix('purpleScroll', 'purple0');
+		if (noteType != 3)
+		{
+			if (noteQuant > -1)
+			{
+				animation.addByPrefix('greenScroll', 'green0');
+				animation.addByPrefix('redScroll', 'red0');
+				animation.addByPrefix('blueScroll', 'blue0');
+				animation.addByPrefix('purpleScroll', 'purple0');
+			}
+			else
+			{
+				animation.addByPrefix('upScroll', 'green note');
+				animation.addByPrefix('rightScroll', 'red note');
+				animation.addByPrefix('downScroll', 'blue note');
+				animation.addByPrefix('leftScroll', 'purple note');
+			}
+		}
+		else
+		{
+			if (noteQuant > -1)
+			{
+				animation.addByPrefix('greenScroll', 'green0');
+				animation.addByPrefix('redScroll', 'red0');
+				animation.addByPrefix('blueScroll', 'blue0');
+				animation.addByPrefix('purpleScroll', 'purple0');
+			}
+			else
+			{
+				animation.addByPrefix('upScroll', 'green note');
+				animation.addByPrefix('rightScroll', 'red note');
+				animation.addByPrefix('downScroll', 'blue note');
+				animation.addByPrefix('leftScroll', 'purple note');
+			}
+		}
 
 		if (isSustainNote)
 		{
@@ -425,17 +471,20 @@ class Note extends FlxSprite
 			animation.addByPrefix('bluehold', 'blue hold piece');
 		}
 
-		if (isRollNote)
+		if (noteType != 3)
 		{
-			loadGraphic(Paths.image('quants/HOLD_quants'), true, 109, 52);
-			animation.add('purpleroll', [10]);
-			animation.add('purplerollend', [11]);
-			animation.add('greenroll', [14]);
-			animation.add('greenrollend', [15]);
-			animation.add('redroll', [2]);
-			animation.add('redrollend', [3]);
-			animation.add('blueroll', [34]);
-			animation.add('bluerollend', [35]);
+			if (isRollNote)
+			{
+				loadGraphic(Paths.image('quants/HOLD_quants'), true, 109, 52);
+				animation.add('purpleroll', [10]);
+				animation.add('purplerollend', [11]);
+				animation.add('greenroll', [14]);
+				animation.add('greenrollend', [15]);
+				animation.add('redroll', [2]);
+				animation.add('redrollend', [3]);
+				animation.add('blueroll', [34]);
+				animation.add('bluerollend', [35]);
+			}
 		}
 
 		setGraphicSize(Std.int(width * 0.7));
