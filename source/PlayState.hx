@@ -1,5 +1,10 @@
 package;
 
+import openfl.Lib;
+import openfl.geom.Matrix3D;
+import openfl.display.Bitmap;
+import openfl.display.BitmapData;
+import openfl.display.Sprite;
 import flixel.addons.effects.chainable.FlxGlitchEffect;
 import haxe.Exception;
 import openfl.geom.Matrix;
@@ -293,6 +298,9 @@ class PlayState extends MusicBeatState
 	var xLerp:Float = 0;
 	var ySkew:Float = 0;
 	var xSkew:Float = 0;
+
+	var fakeCam:Sprite3D;
+	var distort:CameraDistorter;
 
 	override public function create()
 	{
@@ -1084,6 +1092,13 @@ class PlayState extends MusicBeatState
 			luaArray.push(new FunkinLua(luaFile));
 		#end
 
+		// distort = new CameraDistorter(camReceptors, 0, 0, 480, 480);
+
+		fakeCam = Sprite3D.newCamera(camReceptors);
+		// fakeCam.x = Lib.application.window.width / 2;
+		// fakeCam.y = Lib.application.window.height / 2;
+		FlxG.addChildBelowMouse(fakeCam);
+
 		var daSong:String = curSong.toLowerCase();
 		if (isStoryMode && !seenCutscene)
 		{
@@ -1176,6 +1191,10 @@ class PlayState extends MusicBeatState
 		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		#end
 		super.create();
+
+		// fakeCam = new Camera3D(camReceptors);
+		// @:privateAccess
+		// fakeCam._flashSprite.dumb = true;
 	}
 
 	public function addCharacterToList(newCharacter:String, type:Int)
@@ -2260,6 +2279,35 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
+		@:privateAccess
+		if (fakeCam.visible)
+			fakeCam.render();
+
+		if (fakeCam.rotX != 0 || fakeCam.rotY != 0)
+			fakeCam.visible = true;
+		else
+			fakeCam.visible = false;
+
+		if (FlxG.keys.pressed.P)
+		{
+			fakeCam.rotX += 0.1;
+		}
+
+		if (FlxG.keys.pressed.I)
+		{
+			fakeCam.rotX -= 0.1;
+		}
+
+		if (FlxG.keys.pressed.U)
+		{
+			fakeCam.rotY += 0.1;
+		}
+
+		if (FlxG.keys.pressed.T)
+		{
+			fakeCam.rotY -= 0.1;
+		}
+
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
@@ -2274,6 +2322,7 @@ class PlayState extends MusicBeatState
 		iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
 		iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
 
+		// fakeCam.updateCam();
 		if (health > 2)
 			health = 2;
 
@@ -2484,8 +2533,10 @@ class PlayState extends MusicBeatState
 			{
 				xLerp = FlxMath.lerp(xLerp, xSkew, 0.07 * (FlxG.updateFramerate / 60));
 				yLerp = FlxMath.lerp(yLerp, ySkew, 0.07 * (FlxG.updateFramerate / 60));
-				// camHUD.flashSprite.transform.matrix = new Matrix(1, yLerp, xLerp, 1, 0, 0);
+
 				camReceptors.flashSprite.transform.matrix = new Matrix(1, yLerp, xLerp, 1, 0, 0);
+				// distort.skewX = xLerp;
+				// distort.skewY = yLerp;
 			}
 
 			notes.forEachAlive(function(daNote:Note)
@@ -4316,7 +4367,7 @@ class PlayState extends MusicBeatState
 			var isSus:Bool = note.isSustainNote; // GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
 			var leData:Int = note.noteData;
 			var leType:Int = note.noteType;
-			if (!note.isSustainNote || !note.isRollNote)
+			if (!note.isSustainNote)
 			{
 				if (cpuControlled)
 				{

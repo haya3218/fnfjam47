@@ -425,7 +425,7 @@ class Note extends FlxSprite
 	{
 		if (noteType != 3)
 		{
-			if (noteQuant > -1)
+			if (noteQuant <= -1)
 			{
 				animation.addByPrefix('greenScroll', 'green0');
 				animation.addByPrefix('redScroll', 'red0');
@@ -442,12 +442,12 @@ class Note extends FlxSprite
 		}
 		else
 		{
-			if (noteQuant > -1)
+			if (noteQuant <= -1)
 			{
-				animation.addByPrefix('greenScroll', 'green0');
-				animation.addByPrefix('redScroll', 'red0');
-				animation.addByPrefix('blueScroll', 'blue0');
-				animation.addByPrefix('purpleScroll', 'purple0');
+				animation.addByPrefix('greenScroll', 'green note');
+				animation.addByPrefix('redScroll', 'red note');
+				animation.addByPrefix('blueScroll', 'blue note');
+				animation.addByPrefix('purpleScroll', 'purple note');
 			}
 			else
 			{
