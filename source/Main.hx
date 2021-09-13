@@ -104,18 +104,6 @@ class Main extends Sprite
 		game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
 		addChild(game);
 
-		var tempSprite:Sprite = new Sprite();
-		var matrix:Matrix = new Matrix();
-		matrix.createGradientBox(200, 100, Math.PI / 2, 0, 0);
-		tempSprite.graphics.beginGradientFill(GradientType.LINEAR, [0x555555, 0xdddddd], [1, 1], [0, 255], matrix, SpreadMethod.PAD);
-		tempSprite.graphics.drawRect(0, 0, 200, 100);
-
-		perspectiveSprite = new Sprite3D(tempSprite);
-		// addChild(perspectiveSprite);
-		perspectiveSprite.x = sw / 2;
-		perspectiveSprite.y = sh / 2;
-		stage.addEventListener(MouseEvent.MOUSE_MOVE, moveMouse);
-
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
@@ -192,10 +180,4 @@ class Main extends Sprite
 		Sys.exit(1);
 	}
 	#end
-
-	private function moveMouse(e:MouseEvent):Void
-	{
-		perspectiveSprite.rotX = Std.int(sh / 2 - mouseY);
-		perspectiveSprite.rotY = Std.int(sw / 2 - mouseX);
-	}
 }
