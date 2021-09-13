@@ -1095,8 +1095,8 @@ class PlayState extends MusicBeatState
 		// distort = new CameraDistorter(camReceptors, 0, 0, 480, 480);
 
 		fakeCam = Sprite3D.newCamera(camReceptors);
-		// fakeCam.x = Lib.application.window.width / 2;
-		// fakeCam.y = Lib.application.window.height / 2;
+		fakeCam.x = Lib.application.window.width / 2;
+		fakeCam.y = Lib.application.window.height / 2;
 		FlxG.addChildBelowMouse(fakeCam);
 
 		var daSong:String = curSong.toLowerCase();
