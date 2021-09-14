@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxBasic;
 import haxe.Exception;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
@@ -13,6 +14,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.FlxState;
+import openfl.Assets;
 
 class MusicBeatState extends FlxUIState
 {
@@ -26,8 +28,13 @@ class MusicBeatState extends FlxUIState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
+	var trackedAssets:Array<FlxBasic> = [];
+
+	private static var thisState:MusicBeatState = null;
+
 	override function create()
 	{
+		thisState = this;
 		#if MODS_ALLOWED
 		if (!ClientPrefs.imagesPersist)
 		{
@@ -99,6 +106,9 @@ class MusicBeatState extends FlxUIState
 			{
 				CustomFadeTransition.finishCallback = function()
 				{
+					clearBitmapCache();
+
+					thisState.trackedAssets = [];
 					FlxG.switchState(nextState);
 				};
 				// trace('changed state');
@@ -148,5 +158,34 @@ class MusicBeatState extends FlxUIState
 			"ValueException?"
 		];
 		throw new Exception(piss[FlxG.random.int(0, piss.length)]);
+	}
+
+	public static function clearBitmapCache()
+	{
+		@:privateAccess
+		for (key in FlxG.bitmap._cache.keys())
+		{
+			var obj = FlxG.bitmap._cache.get(key);
+			if (obj != null)
+			{
+				Assets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
+				thisState.unloadAssets();
+			}
+		}
+	}
+
+	override function add(Object:flixel.FlxBasic):flixel.FlxBasic
+	{
+		trackedAssets.insert(trackedAssets.length, Object);
+		return super.add(Object);
+	}
+
+	public function unloadAssets():Void
+	{
+		for (asset in trackedAssets)
+		{
+			asset.destroy();
+		}
 	}
 }

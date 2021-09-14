@@ -60,6 +60,9 @@ enum ModTable
 	MOD(a:Float, b:Float, c:Float);
 }
 
+/**
+ * @since your mom died
+ */
 class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
@@ -3480,10 +3483,12 @@ class PlayState extends MusicBeatState
 							});
 						});
 				}
+
 			case 'Rotate Receptors':
 				var split = value1.split(',');
 				var val1 = split[0].trim();
 				var val2 = split[1].trim();
+				var val4 = split[2].trim();
 				var val3:Float = Std.parseFloat(value2);
 
 				if (val1 == null)
@@ -3492,14 +3497,19 @@ class PlayState extends MusicBeatState
 					val2 = '1';
 				if (Math.isNaN(val3))
 					val3 = 0;
+				if (val4 == null)
+					val4 = 'linear';
+
+				if (val2 == '0')
+					val2 = '0.000001'; // just make it a really really low number
 				switch (val1.toLowerCase())
 				{
 					case 'x':
-						FlxTween.tween(fakeCam, {rotX: fakeCam.rotX + val3}, Std.parseFloat(val2), {ease: FlxEase.linear});
+						FlxTween.tween(fakeCam, {rotX: fakeCam.rotX + val3}, Std.parseFloat(val2), {ease: getFlxEaseByString(val4)});
 					case 'y':
-						FlxTween.tween(fakeCam, {rotY: fakeCam.rotY + val3}, Std.parseFloat(val2), {ease: FlxEase.linear});
+						FlxTween.tween(fakeCam, {rotY: fakeCam.rotY + val3}, Std.parseFloat(val2), {ease: getFlxEaseByString(val4)});
 					case 'z' | 'none' | 'n/a' | _:
-						FlxTween.tween(camReceptors, {angle: camReceptors.angle + val3}, Std.parseFloat(val2), {ease: FlxEase.linear});
+						FlxTween.tween(camReceptors, {angle: camReceptors.angle + val3}, Std.parseFloat(val2), {ease: getFlxEaseByString(val4)});
 				}
 		}
 		if (!onLua)
@@ -4969,5 +4979,86 @@ class PlayState extends MusicBeatState
 			if (!FlxG.game.contains(cam.flashSprite))
 				FlxG.game.addChildAt(cam.flashSprite, FlxG.game.getChildIndex(FlxG.game._inputContainer));
 		}
+	}
+
+	// Better optimized than using some getProperty shit or idk
+	function getFlxEaseByString(?ease:String = '')
+	{
+		switch (ease.toLowerCase())
+		{
+			case 'backin':
+				return FlxEase.backIn;
+			case 'backinout':
+				return FlxEase.backInOut;
+			case 'backout':
+				return FlxEase.backOut;
+			case 'bouncein':
+				return FlxEase.bounceIn;
+			case 'bounceinout':
+				return FlxEase.bounceInOut;
+			case 'bounceout':
+				return FlxEase.bounceOut;
+			case 'circin':
+				return FlxEase.circIn;
+			case 'circinout':
+				return FlxEase.circInOut;
+			case 'circout':
+				return FlxEase.circOut;
+			case 'cubein':
+				return FlxEase.cubeIn;
+			case 'cubeinout':
+				return FlxEase.cubeInOut;
+			case 'cubeout':
+				return FlxEase.cubeOut;
+			case 'elasticin':
+				return FlxEase.elasticIn;
+			case 'elasticinout':
+				return FlxEase.elasticInOut;
+			case 'elasticout':
+				return FlxEase.elasticOut;
+			case 'expoin':
+				return FlxEase.expoIn;
+			case 'expoinout':
+				return FlxEase.expoInOut;
+			case 'expoout':
+				return FlxEase.expoOut;
+			case 'quadin':
+				return FlxEase.quadIn;
+			case 'quadinout':
+				return FlxEase.quadInOut;
+			case 'quadout':
+				return FlxEase.quadOut;
+			case 'quartin':
+				return FlxEase.quartIn;
+			case 'quartinout':
+				return FlxEase.quartInOut;
+			case 'quartout':
+				return FlxEase.quartOut;
+			case 'quintin':
+				return FlxEase.quintIn;
+			case 'quintinout':
+				return FlxEase.quintInOut;
+			case 'quintout':
+				return FlxEase.quintOut;
+			case 'sinein':
+				return FlxEase.sineIn;
+			case 'sineinout':
+				return FlxEase.sineInOut;
+			case 'sineout':
+				return FlxEase.sineOut;
+			case 'smoothstepin':
+				return FlxEase.smoothStepIn;
+			case 'smoothstepinout':
+				return FlxEase.smoothStepInOut;
+			case 'smoothstepout':
+				return FlxEase.smoothStepInOut;
+			case 'smootherstepin':
+				return FlxEase.smootherStepIn;
+			case 'smootherstepinout':
+				return FlxEase.smootherStepInOut;
+			case 'smootherstepout':
+				return FlxEase.smootherStepOut;
+		}
+		return FlxEase.linear;
 	}
 }

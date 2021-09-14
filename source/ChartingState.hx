@@ -118,7 +118,7 @@ class ChartingState extends MusicBeatState
 		['Move Receptor Y', "Value 1: Receptor index\nValue 2: Additive Y"],
 		[
 			'Rotate Receptors',
-			"Value 1: Axis and duration\nValue 2: Additive amount\n\nEvery value works as the following example: \"x, 1\".\nThe first string (x) is the axis.\nThe second number (1) is the duration."
+			"Value 1: Axis, duration and ease\nValue 2: Additive amount\n\nEvery value works as the following example: \"x, 1, linear\".\nThe first parameter (x) is the axis.\nThe second parameter (1) is the duration.\nThe third parameter (linear) is the ease.\nAvailable eases are found in\neaseDoc.txt"
 		]
 	];
 

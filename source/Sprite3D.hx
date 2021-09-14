@@ -46,6 +46,8 @@ class Sprite3D extends Sprite
 
 	private var _camera:FlxCamera;
 
+	public var disableClearing:Bool = false;
+
 	public function new(inputDisplayObject:DisplayObject, isDumb:Bool = false, matrix:Matrix = null, cam:FlxCamera = null)
 	{
 		super();
@@ -106,7 +108,8 @@ class Sprite3D extends Sprite
 
 		projectedPoints = new Vector<Float>();
 		Utils3D.projectVectors(mat, vertices, projectedPoints, uvt);
-		plane.graphics.clear();
+		if (!disableClearing)
+			plane.graphics.clear();
 		plane.graphics.beginBitmapFill(bmpData, null, false, true);
 		plane.graphics.drawTriangles(projectedPoints, indices, uvt, TriangleCulling.NONE);
 		plane.graphics.endFill();
