@@ -115,7 +115,11 @@ class ChartingState extends MusicBeatState
 		['Skew Camera', "Says it all."],
 		['Change Speed', "Value 1: The speed to set to."],
 		['Random Ass', "HOLY SHI-"],
-		['Move Receptor Y', "Value 1: Y"]
+		['Move Receptor Y', "Value 1: Receptor index\nValue 2: Additive Y"],
+		[
+			'Rotate Receptors',
+			"Value 1: Axis and duration\nValue 2: Additive amount\n\nEvery value works as the following example: \"x, 1\".\nThe first string (x) is the axis.\nThe second number (1) is the duration."
+		]
 	];
 
 	var _file:FileReference;

@@ -302,6 +302,8 @@ class PlayState extends MusicBeatState
 	var fakeCam:Sprite3D;
 	var distort:CameraDistorter;
 
+	var dummyList:Array<FlxCamera> = [];
+
 	override public function create()
 	{
 		if (FlxG.sound.music != null)
@@ -1098,6 +1100,9 @@ class PlayState extends MusicBeatState
 		fakeCam.x = Lib.application.window.width / 2;
 		fakeCam.y = Lib.application.window.height / 2;
 		FlxG.addChildBelowMouse(fakeCam);
+
+		dummyList = [];
+		FlxG.game.removeChild(camReceptors.flashSprite);
 
 		var daSong:String = curSong.toLowerCase();
 		if (isStoryMode && !seenCutscene)
@@ -1933,6 +1938,8 @@ class PlayState extends MusicBeatState
 					chars[i].colorTween.active = false;
 				}
 			}
+
+			camReceptors.visible = false;
 		}
 
 		super.openSubState(SubState);
@@ -1984,6 +1991,8 @@ class PlayState extends MusicBeatState
 				DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 			}
 			#end
+
+			camReceptors.visible = true;
 		}
 
 		super.closeSubState();
@@ -2288,6 +2297,8 @@ class PlayState extends MusicBeatState
 		else
 			fakeCam.visible = false;
 
+		updateCamState(camReceptors);
+
 		if (FlxG.keys.pressed.P)
 		{
 			fakeCam.rotX += 0.1;
@@ -2403,7 +2414,8 @@ class PlayState extends MusicBeatState
 			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 		}
 
-		camReceptors.visible = camHUD.visible;
+		if (!paused)
+			camReceptors.visible = camHUD.visible;
 		camReceptors.zoom = camHUD.zoom;
 
 		FlxG.watch.addQuick("beatShit", curBeat);
@@ -3467,6 +3479,27 @@ class PlayState extends MusicBeatState
 								}
 							});
 						});
+				}
+			case 'Rotate Receptors':
+				var split = value1.split(',');
+				var val1 = split[0].trim();
+				var val2 = split[1].trim();
+				var val3:Float = Std.parseFloat(value2);
+
+				if (val1 == null)
+					val1 = 'z';
+				if (val2 == null)
+					val2 = '1';
+				if (Math.isNaN(val3))
+					val3 = 0;
+				switch (val1.toLowerCase())
+				{
+					case 'x':
+						FlxTween.tween(fakeCam, {rotX: fakeCam.rotX + val3}, Std.parseFloat(val2), {ease: FlxEase.linear});
+					case 'y':
+						FlxTween.tween(fakeCam, {rotY: fakeCam.rotY + val3}, Std.parseFloat(val2), {ease: FlxEase.linear});
+					case 'z' | 'none' | 'n/a' | _:
+						FlxTween.tween(camReceptors, {angle: camReceptors.angle + val3}, Std.parseFloat(val2), {ease: FlxEase.linear});
 				}
 		}
 		if (!onLua)
@@ -4922,4 +4955,19 @@ class PlayState extends MusicBeatState
 
 	var curLight:Int = 0;
 	var curLightEvent:Int = 0;
+
+	function updateCamState(cam:FlxCamera)
+	{
+		if (fakeCam.visible)
+		{
+			if (FlxG.game.contains(cam.flashSprite))
+				FlxG.game.removeChild(cam.flashSprite);
+		}
+		else
+		{
+			@:privateAccess
+			if (!FlxG.game.contains(cam.flashSprite))
+				FlxG.game.addChildAt(cam.flashSprite, FlxG.game.getChildIndex(FlxG.game._inputContainer));
+		}
+	}
 }
